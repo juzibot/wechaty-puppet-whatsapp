@@ -61,7 +61,7 @@
     "tstest": "^1.2.8"
   },
   "peerDependencies": {
-    "@juzi/wechaty-puppet": "1.0.0"
+    "@juzi/wechaty-puppet": "^1.0.1"
   },
   "dependencies": {
     "@juzi/whatsapp-web.js": "^1.16.11",

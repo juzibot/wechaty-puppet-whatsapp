@@ -35,7 +35,7 @@ import { contactSelfQRCode, contactSelfName, contactSelfSignature } from './pupp
 import { contactAlias, contactPhone, contactCorporationRemark, contactDescription, contactList, contactAvatar, contactRawPayloadParser, contactRawPayload } from './puppet-mixin/contact.js'
 import { conversationReadMark } from './puppet-mixin/conversation.js'
 import { friendshipRawPayload, friendshipRawPayloadParser, friendshipSearchPhone, friendshipSearchWeixin, friendshipAdd, friendshipAccept, friendshipSearchHandle } from './puppet-mixin/friendship.js'
-import { messageContact, messageImage, messageRecall, messageFile, messageUrl, messageMiniProgram, messageSendText, messageSendFile, messageSendContact, messageSendUrl, messageSendMiniProgram, messageForward, messageRawPayloadParser, messageRawPayload, messagePost } from './puppet-mixin/message.js'
+import { messageContact, messageImage, messageRecall, messageFile, messageUrl, messageMiniProgram, messageSendText, messageSendFile, messageSendContact, messageSendUrl, messageSendMiniProgram, messageForward, messageRawPayloadParser, messageRawPayload, messagePost, messageSendChannel, messageChannel } from './puppet-mixin/message.js'
 import { roomRawPayloadParser, roomRawPayload, roomList, roomDel, roomAvatar, roomAdd, roomTopic, roomCreate, roomQuit, roomQRCode, roomMemberList, roomMemberRawPayload, roomMemberRawPayloadParser, roomAnnounce, roomInvitationAccept, roomInvitationRawPayload, roomInvitationRawPayloadParser } from './puppet-mixin/room.js'
 import { tagContactAdd, tagContactRemove, tagContactDelete, tagContactList } from './puppet-mixin/tag.js'
 
@@ -283,11 +283,13 @@ class PuppetWhatsapp extends PUPPET.Puppet {
   override messageFile = messageFile
   override messageUrl = messageUrl
   override messageMiniProgram = messageMiniProgram
+  override messageChannel = messageChannel
   override messageSendText = messageSendText
   override messageSendFile = messageSendFile
   override messageSendContact = messageSendContact
   override messageSendUrl = messageSendUrl
   override messageSendMiniProgram = messageSendMiniProgram
+  override messageSendChannel = messageSendChannel
   override messageForward = messageForward
 
   override messageRawPayloadParser = messageRawPayloadParser
