@@ -1,5 +1,5 @@
 import { EventEmitter as EE } from 'ee-ts'
-import type { MemoryCard } from 'wechaty-puppet/dist/esm/src/config'
+import type { MemoryCard } from '@juzi/wechaty-puppet/dist/esm/src/config'
 import { log, MAX_HEARTBEAT_MISSED, MEMORY_SLOT } from './config.js'
 import { CacheManager } from './data/cache-manager.js'
 import { WA_ERROR_TYPE } from './exception/error-type.js'

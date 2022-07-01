@@ -1,4 +1,4 @@
-import * as PUPPET from 'wechaty-puppet'
+import * as PUPPET from '@juzi/wechaty-puppet'
 
 import { PuppetWhatsapp } from '../src/mod.js'
 

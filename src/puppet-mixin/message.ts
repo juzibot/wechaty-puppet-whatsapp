@@ -1,4 +1,4 @@
-import * as PUPPET from 'wechaty-puppet'
+import * as PUPPET from '@juzi/wechaty-puppet'
 import * as path  from 'path'
 import mime from 'mime'
 import type PuppetWhatsApp from '../puppet-whatsapp.js'

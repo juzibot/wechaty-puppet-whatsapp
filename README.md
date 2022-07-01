@@ -17,8 +17,8 @@ Puppet Whatsapp
 ### Puppet Whatsapp
 
 ```ts
-import { WechatyBuilder }   from 'wechaty'
-import { PuppetWhatsapp } from 'wechaty-puppet-whatsapp'
+import { WechatyBuilder }   from '@juzi/wechaty'
+import { PuppetWhatsapp } from '@juzi/wechaty-puppet-whatsapp'
 
 const puppet  = new PuppetWhatsapp()
 const wechaty = WechatyBuilder.build({ puppet })

@@ -3,7 +3,7 @@
 import {
   PuppetWhatsapp,
   VERSION,
-}                 from 'wechaty-puppet-whatsapp'
+}                 from '@juzi/wechaty-puppet-whatsapp'
 
 async function main () {
   const puppet = new PuppetWhatsapp()

@@ -1,4 +1,4 @@
-import type * as PUPPET from 'wechaty-puppet'
+import type * as PUPPET from '@juzi/wechaty-puppet'
 import type {  } from '@juzi/whatsapp-web.js'
 import type {
   GroupNotification,

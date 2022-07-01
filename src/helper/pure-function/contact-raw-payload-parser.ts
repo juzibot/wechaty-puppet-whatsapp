@@ -1,4 +1,4 @@
-import * as PUPPET from 'wechaty-puppet'
+import * as PUPPET from '@juzi/wechaty-puppet'
 import { SPECIAL_BOT_PUSHNAME } from '../../config.js'
 
 import type { WhatsAppContactPayload } from '../../schema/whatsapp-type.js'

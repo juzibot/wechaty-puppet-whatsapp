@@ -1,4 +1,4 @@
-import type * as PUPPET from 'wechaty-puppet'
+import type * as PUPPET from '@juzi/wechaty-puppet'
 
 export type ManagerEvents = {
   'message': (payload: PUPPET.payloads.EventMessage) => any,

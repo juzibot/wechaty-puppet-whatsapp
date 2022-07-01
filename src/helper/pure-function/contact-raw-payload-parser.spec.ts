@@ -2,7 +2,7 @@
 
 import { test } from 'tstest'
 import { parserContactRawPayload } from './contact-raw-payload-parser.js'
-import * as PUPPET from 'wechaty-puppet'
+import * as PUPPET from '@juzi/wechaty-puppet'
 
 test('parse self contact info', async t => {
   const selfContactInfo = {

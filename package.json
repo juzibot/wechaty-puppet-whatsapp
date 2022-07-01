@@ -1,6 +1,6 @@
 {
-  "name": "wechaty-puppet-whatsapp",
-  "version": "1.19.12",
+  "name": "@juzi/wechaty-puppet-whatsapp",
+  "version": "1.0.0",
   "description": "Wechaty Puppet for WhatsApp",
   "type": "module",
   "exports": {
@@ -30,7 +30,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wechaty/puppet-whatsapp.git"
+    "url": "git+https://github.com/juzibot/puppet-whatsapp.git"
   },
   "keywords": [
     "chatie",
@@ -45,12 +45,11 @@
   "author": "Huan LI <zixia@zixia.net>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/wechaty/puppet-whatsapp/issues"
+    "url": "https://github.com/juzibot/puppet-whatsapp/issues"
   },
-  "homepage": "https://github.com/wechaty/puppet-whatsapp#readme",
+  "homepage": "https://github.com/juzibot/puppet-whatsapp#readme",
   "devDependencies": {
     "@chatie/eslint-config": "^1.0.4",
-    "@chatie/git-scripts": "^0.6.2",
     "@chatie/semver": "^0.4.7",
     "@chatie/tsconfig": "^4.6.3",
     "@types/cuid": "^2.0.1",
@@ -62,7 +61,7 @@
     "tstest": "^1.2.8"
   },
   "peerDependencies": {
-    "wechaty-puppet": "^1.19.4"
+    "@juzi/wechaty-puppet": "1.0.0"
   },
   "dependencies": {
     "@juzi/whatsapp-web.js": "^1.16.10",
@@ -86,10 +85,5 @@
   "publishConfig": {
     "access": "public",
     "tag": "next"
-  },
-  "git": {
-    "scripts": {
-      "pre-push": "npx git-scripts-pre-push"
-    }
   }
 }

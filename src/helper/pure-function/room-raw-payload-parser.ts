@@ -1,4 +1,4 @@
-import type * as PUPPET from 'wechaty-puppet'
+import type * as PUPPET from '@juzi/wechaty-puppet'
 import { WA_ERROR_TYPE } from '../../exception/error-type.js'
 import WAError from '../../exception/whatsapp-error.js'
 import type { WhatsAppContactPayload as RoomPayload, GroupChat } from '../../schema/whatsapp-type.js'

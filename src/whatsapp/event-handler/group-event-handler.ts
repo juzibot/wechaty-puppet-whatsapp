@@ -4,7 +4,7 @@ import {
 } from '../../schema/whatsapp-interface.js'
 import WhatsAppBase from '../whatsapp-base.js'
 
-import type * as PUPPET from 'wechaty-puppet'
+import type * as PUPPET from '@juzi/wechaty-puppet'
 import type {
   GroupNotification,
 } from '../../schema/whatsapp-type.js'

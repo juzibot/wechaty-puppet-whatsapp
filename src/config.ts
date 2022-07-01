@@ -3,7 +3,7 @@ import {
   MessageTypes as WhatsAppMessageType,
 } from './schema/whatsapp-interface.js'
 import { packageJson } from './package-json.js'
-export { log } from 'wechaty-puppet'
+export { log } from '@juzi/wechaty-puppet'
 export {
   FileBox,
   FileBoxType,

@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-import * as PUPPET from 'wechaty-puppet'
+import * as PUPPET from '@juzi/wechaty-puppet'
 import {
   MIN_BATTERY_VALUE_FOR_LOGOUT,
   DEFAULT_TIMEOUT,

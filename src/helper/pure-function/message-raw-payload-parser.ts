@@ -1,4 +1,4 @@
-import * as PUPPET from 'wechaty-puppet'
+import * as PUPPET from '@juzi/wechaty-puppet'
 import { WA_ERROR_TYPE } from '../../exception/error-type.js'
 import WAError from '../../exception/whatsapp-error.js'
 import { isRoomId } from '../miscellaneous.js'

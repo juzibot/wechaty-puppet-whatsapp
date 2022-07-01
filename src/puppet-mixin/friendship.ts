@@ -1,4 +1,4 @@
-import * as PUPPET from 'wechaty-puppet'
+import * as PUPPET from '@juzi/wechaty-puppet'
 import { LANGUAGE, log, STRINGS } from '../config.js'
 import { WA_ERROR_TYPE } from '../exception/error-type.js'
 import WAError from '../exception/whatsapp-error.js'
