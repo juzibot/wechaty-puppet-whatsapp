@@ -23,8 +23,8 @@ npm init -y
 npm install --production *-*.*.*.tgz \
   @types/node \
   @chatie/tsconfig@$NPM_TAG \
-  "@juzi/wechaty-puppet@$NPM_TAG" \
-  "@juzi/wechaty@$NPM_TAG" \
+  "@juzi/wechaty-puppet@1.0.0" \
+  "@juzi/wechaty@1.0.0" \
 
 #
 # CommonJS
