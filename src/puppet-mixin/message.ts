@@ -222,7 +222,7 @@ export async function messageChannel (this: PuppetWhatsApp, messageId: string): 
 }
 
 export async function messageSend (this: PuppetWhatsApp, conversationId: string, content: MessageContent, options?: MessageSendOptions, timeout = DEFAULT_TIMEOUT.MESSAGE_SEND): Promise<string> {
-  log.info(PRE, 'messageSend(%s, %s)', conversationId, JSON.stringify(options))
+  log.verbose(PRE, 'messageSend(%s, %s)', conversationId, JSON.stringify(options))
 
   const msg = await this.manager.sendMessage(conversationId, content, options)
   const messageId = msg.id.id
