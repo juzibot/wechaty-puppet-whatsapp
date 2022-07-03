@@ -241,3 +241,83 @@ test('message parser for contact message which send from other contact', async t
 
   t.pass('message parser for contact message which send from other contact pass')
 })
+
+test('message parser for quoted message', async t => {
+  const quotedMessage = {
+    _data: {
+      id: {
+        fromMe: false,
+        remote: '8618512345678@c.us',
+        id: '3ABBFF4A9E109F698A4D',
+        _serialized: 'false_8618512345678@c.us_3ABBFF4A9E109F698A4D',
+      },
+      body: 'ding',
+      type: 'chat',
+      t: 1656842344,
+      notifyName: 'Nan Wang',
+      from: '8618512345678@c.us',
+      to: '8618512345679@c.us',
+      self: 'in',
+      ack: 1,
+      isNewMsg: true,
+      star: false,
+      recvFresh: true,
+      isFromTemplate: false,
+      thumbnail: '',
+      broadcast: false,
+      quotedMsg: {
+        type: 'chat',
+        body: '123',
+      },
+      quotedStanzaID: '3EB08754AB51A8FC613F',
+      quotedParticipant: '8618512345679@c.us',
+      mentionedJidList: [],
+      isVcardOverMmsDocument: false,
+      hasReaction: false,
+      ephemeralOutOfSync: false,
+      productHeaderImageRejected: false,
+      lastPlaybackProgress: 0,
+      isDynamicReplyButtonsMsg: false,
+      isMdHistoryMsg: false,
+      requiresDirectConnection: false,
+      pttForwardedFeaturesEnabled: true,
+      isEphemeral: false,
+      isStatusV3: false,
+      links: [],
+    },
+    id: {
+      fromMe: false,
+      remote: '8618512345678@c.us',
+      id: '3ABBFF4A9E109F698A4D',
+      _serialized: 'false_8618512345678@c.us_3ABBFF4A9E109F698A4D',
+    },
+    ack: 1,
+    hasMedia: false,
+    body: 'ding',
+    type: MessageTypes.TEXT,
+    timestamp: 1656842344,
+    from: '8618512345678@c.us',
+    to: '8618512345679@c.us',
+    deviceType: 'ios',
+    isForwarded: false,
+    forwardingScore: 0,
+    isStatus: false,
+    isStarred: false,
+    broadcast: false,
+    fromMe: false,
+    hasQuotedMsg: true,
+    vCards: [],
+    mentionedIds: [],
+    isGif: false,
+    isEphemeral: false,
+    links: [],
+  }
+  const messagePayload = parserMessageRawPayload(quotedMessage)
+
+  t.ok(messagePayload.listenerId === '8613812345679@c.us', 'should get correct target id')
+  t.ok(messagePayload.roomId === undefined, 'should get no room id')
+  t.ok(messagePayload.talkerId === '8613812345678@c.us', 'shuold get correct sender id')
+  t.ok(messagePayload.text === 'hola', 'should get correct message content')
+
+  t.pass('message parser for contact message which send from other contact pass')
+})
