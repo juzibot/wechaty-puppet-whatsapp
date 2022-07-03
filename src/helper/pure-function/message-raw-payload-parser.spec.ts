@@ -251,7 +251,7 @@ test('message parser for quoted message', async t => {
         id: '3ABBFF4A9E109F698A4D',
         _serialized: 'false_8618512345678@c.us_3ABBFF4A9E109F698A4D',
       },
-      body: 'ding',
+      body: 'hola',
       type: 'chat',
       t: 1656842344,
       notifyName: 'Nan Wang',
@@ -293,7 +293,7 @@ test('message parser for quoted message', async t => {
     },
     ack: 1,
     hasMedia: false,
-    body: 'ding',
+    body: 'hola',
     type: MessageTypes.TEXT,
     timestamp: 1656842344,
     from: '8618512345678@c.us',
@@ -314,10 +314,11 @@ test('message parser for quoted message', async t => {
   }
   const messagePayload = parserMessageRawPayload(quotedMessage)
 
-  t.ok(messagePayload.listenerId === '8613812345679@c.us', 'should get correct target id')
-  t.ok(messagePayload.roomId === undefined, 'should get no room id')
-  t.ok(messagePayload.talkerId === '8613812345678@c.us', 'shuold get correct sender id')
-  t.ok(messagePayload.text === 'hola', 'should get correct message content')
+  t.same(messagePayload.listenerId, '8618512345679@c.us', 'should get correct target id')
+  t.same(messagePayload.roomId, undefined, 'should get no room id')
+  t.same(messagePayload.talkerId, '8618512345678@c.us', 'shuold get correct sender id')
+  t.same(messagePayload.text, 'hola', 'should get correct message content')
+  t.same(messagePayload.quoteId, '3EB08754AB51A8FC613F', 'should get correct message quote id')
 
   t.pass('message parser for contact message which send from other contact pass')
 })
