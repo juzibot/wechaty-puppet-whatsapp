@@ -1,6 +1,6 @@
 {
   "name": "@juzi/wechaty-puppet-whatsapp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Wechaty Puppet for WhatsApp",
   "type": "module",
   "exports": {
@@ -61,10 +61,10 @@
     "tstest": "^1.2.8"
   },
   "peerDependencies": {
-    "@juzi/wechaty-puppet": "1.0.0"
+    "@juzi/wechaty-puppet": "^1.0.1"
   },
   "dependencies": {
-    "@juzi/whatsapp-web.js": "^1.16.11",
+    "@juzi/whatsapp-web.js": "^1.16.13",
     "ee-ts": "^1.0.2",
     "flash-store": "^1.0.6",
     "fs-extra": "^10.0.1",

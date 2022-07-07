@@ -54,8 +54,10 @@ export function parserMessageRawPayload (messagePayload: WhatsAppMessagePayload)
     // eslint-disable-next-line sort-keys
     listenerId,
 
+    quoteId: messagePayload.hasQuotedMsg ? messagePayload._data?.quotedStanzaID : undefined,
+
     type: getMessageType(messagePayload),
-  } as any
+  } as PUPPET.payloads.Message
 
 }
 

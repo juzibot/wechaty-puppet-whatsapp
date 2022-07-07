@@ -216,8 +216,13 @@ export async function messageMiniProgram (this: PuppetWhatsApp, messageId: strin
   return PUPPET.throwUnsupportedError()
 }
 
+export async function messageChannel (this: PuppetWhatsApp, messageId: string): Promise<PUPPET.payloads.Channel> {
+  log.verbose(PRE, 'messageChannel(%s)', messageId)
+  return PUPPET.throwUnsupportedError()
+}
+
 export async function messageSend (this: PuppetWhatsApp, conversationId: string, content: MessageContent, options?: MessageSendOptions, timeout = DEFAULT_TIMEOUT.MESSAGE_SEND): Promise<string> {
-  log.verbose(PRE, 'messageSend(%s, %s)', conversationId, typeof content)
+  log.verbose(PRE, 'messageSend(%s, %s)', conversationId, JSON.stringify(options))
 
   const msg = await this.manager.sendMessage(conversationId, content, options)
   const messageId = msg.id.id
@@ -226,16 +231,29 @@ export async function messageSend (this: PuppetWhatsApp, conversationId: string,
   return messageId
 }
 
-export async function messageSendText (this: PuppetWhatsApp, conversationId: string, text: string, mentions?: string[]): Promise<void | string> {
-  log.verbose(PRE, 'messageSendText(%s, %s)', conversationId, text)
-  if (mentions) {
+export async function messageSendText (this: PuppetWhatsApp, conversationId: string, text: string, options: PUPPET.types.MessageSendTextOptions = {}): Promise<void | string> {
+  log.verbose(PRE, 'messageSendText(%s, %s, %s)', conversationId, text, JSON.stringify(options))
+  let mentions: string[] = []
+  let quoteId: string | undefined
+  if (Array.isArray(options)) {
+    mentions = options
+  } else {
+    mentions = options.mentionIdList || []
+    quoteId = options.quoteId
+  }
+  const waMessageSendOptions: MessageSendOptions = {}
+  if (mentions.length > 0) {
     const contacts = await Promise.all(mentions.map((v) => (
       this.manager.getContactById(v)
     )))
-    return messageSend.call(this, conversationId, text, { mentions: contacts }, DEFAULT_TIMEOUT.MESSAGE_SEND_TEXT)
-  } else {
-    return messageSend.call(this, conversationId, text, {}, DEFAULT_TIMEOUT.MESSAGE_SEND_TEXT)
+    waMessageSendOptions.mentions = contacts
   }
+
+  if (quoteId) {
+    const quotedMessage = await this.messageRawPayload(quoteId)
+    waMessageSendOptions.quotedMessageId = quotedMessage.id._serialized
+  }
+  return messageSend.call(this, conversationId, text, waMessageSendOptions, DEFAULT_TIMEOUT.MESSAGE_SEND_TEXT)
 }
 
 export async function messageSendFile (this: PuppetWhatsApp, conversationId: string, file: FileBox, options?: MessageSendOptions): Promise<void | string> {
@@ -278,6 +296,11 @@ export async function messageSendMiniProgram (this: PuppetWhatsApp, conversation
   return PUPPET.throwUnsupportedError()
 }
 
+export async function messageSendChannel (this: PuppetWhatsApp, conversationId: string, channelPayload: PUPPET.payloads.Channel): Promise<void> {
+  log.verbose(PRE, 'messageSendChannel(%s, %s)', conversationId, JSON.stringify(channelPayload))
+  return PUPPET.throwUnsupportedError()
+}
+
 export async function messageForward (this: PuppetWhatsApp, conversationId: string, messageId: string): Promise<void> {
   log.verbose(PRE, 'messageForward(%s, %s)', conversationId, messageId)
   const cacheManager = await this.manager.getCacheManager()
@@ -297,11 +320,17 @@ export async function messageForward (this: PuppetWhatsApp, conversationId: stri
 export async function messageRawPayload (this: PuppetWhatsApp, id: string): Promise<WhatsAppMessagePayload> {
   log.verbose(PRE, 'messageRawPayload(%s)', id)
   const cacheManager = await this.manager.getCacheManager()
-  const msg = await cacheManager.getMessageRawPayload(id)
-  if (!msg) {
-    throw WAError(WA_ERROR_TYPE.ERR_MSG_NOT_FOUND, `Can not find this message: ${id}`)
+  let msg = await cacheManager.getMessageRawPayload(id)
+  if (msg) {
+    return msg
   }
-  return msg
+  msg = await this.manager.getMessageWithId(id)
+  if (msg) {
+    msg.timestamp = Date.now()
+    await cacheManager.setMessageRawPayload(id, msg)
+    return msg
+  }
+  throw WAError(WA_ERROR_TYPE.ERR_MSG_NOT_FOUND, `Can not find this message: ${id}`)
 }
 
 export async function messageRawPayloadParser (this: PuppetWhatsApp, whatsAppPayload: WhatsAppMessagePayload): Promise<PUPPET.payloads.Message> {
