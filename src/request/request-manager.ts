@@ -94,6 +94,10 @@ export class RequestManager {
     return this.whatsapp.getLabels()
   }
 
+  public getMessageWithId (id: string) {
+    return this.whatsapp.getMessageWithId(id)
+  }
+
   public getWhatsappIdByNumber (number: string) {
     return this.whatsapp.getNumberId(number)
   }

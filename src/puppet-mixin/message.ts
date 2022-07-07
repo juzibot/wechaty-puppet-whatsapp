@@ -320,11 +320,17 @@ export async function messageForward (this: PuppetWhatsApp, conversationId: stri
 export async function messageRawPayload (this: PuppetWhatsApp, id: string): Promise<WhatsAppMessagePayload> {
   log.verbose(PRE, 'messageRawPayload(%s)', id)
   const cacheManager = await this.manager.getCacheManager()
-  const msg = await cacheManager.getMessageRawPayload(id)
-  if (!msg) {
-    throw WAError(WA_ERROR_TYPE.ERR_MSG_NOT_FOUND, `Can not find this message: ${id}`)
+  let msg = await cacheManager.getMessageRawPayload(id)
+  if (msg) {
+    return msg
   }
-  return msg
+  msg = await this.manager.getMessageWithId(id)
+  if (msg) {
+    msg.timestamp = Date.now()
+    await cacheManager.setMessageRawPayload(id, msg)
+    return msg
+  }
+  throw WAError(WA_ERROR_TYPE.ERR_MSG_NOT_FOUND, `Can not find this message: ${id}`)
 }
 
 export async function messageRawPayloadParser (this: PuppetWhatsApp, whatsAppPayload: WhatsAppMessagePayload): Promise<PUPPET.payloads.Message> {
