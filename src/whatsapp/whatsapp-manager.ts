@@ -124,9 +124,9 @@ export default class WhatsAppManager extends WhatsAppBase {
     whatsAppClient.on('media_uploaded', this.messageEventHandler.onMediaUploaded.bind(this.messageEventHandler))
     whatsAppClient.on('incoming_call', this.messageEventHandler.onIncomingCall.bind(this.messageEventHandler))
 
-    whatsAppClient.on('group_join', this.groupEventHandler.onRoomJoin.bind(this.messageEventHandler))
-    whatsAppClient.on('group_leave', this.groupEventHandler.onRoomLeave.bind(this.messageEventHandler))
-    whatsAppClient.on('group_update', this.groupEventHandler.onRoomUpdate.bind(this.messageEventHandler))
+    whatsAppClient.on('group_join', this.groupEventHandler.onRoomJoin.bind(this.groupEventHandler))
+    whatsAppClient.on('group_leave', this.groupEventHandler.onRoomLeave.bind(this.groupEventHandler))
+    whatsAppClient.on('group_update', this.groupEventHandler.onRoomUpdate.bind(this.groupEventHandler))
 
     const events = [
       'authenticated',
