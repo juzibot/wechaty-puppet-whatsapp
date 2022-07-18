@@ -17,6 +17,7 @@ import {
   isContactId,
   isInviteLink,
   getInviteCode,
+  sleep,
 } from '../../helper/miscellaneous.js'
 import { RequestPool } from '../../request/request-pool.js'
 
@@ -102,6 +103,10 @@ export default class MessageEventHandler extends WhatsAppBase {
       const cacheManager = await this.manager.getCacheManager()
       await cacheManager.setMessageRawPayload(messageId, message)
       const requestPool = RequestPool.Instance
+      const now = Date.now()
+      while (!requestPool.hasRequest(messageId) && Date.now() - now < 400) {
+        await sleep(100)
+      }
       requestPool.resolveRequest(messageId)
       this.emit('message', { messageId })
     }

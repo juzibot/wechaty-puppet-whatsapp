@@ -13,6 +13,10 @@ export class RequestPool {
     return this._instance
   }
 
+  public hasRequest (id: string) {
+    return !!this.poolMap[id]
+  }
+
   public pushRequest (id: string, timeout?: number) {
     const callback = new Promise<void>((resolve, reject) => {
       if (!this.poolMap[id]) {
