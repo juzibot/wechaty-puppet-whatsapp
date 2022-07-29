@@ -25,6 +25,7 @@ export const {
   MessageMedia,
   MessageAck,
   MessageTypes,
+  Location,
   WAState,
   WhatsWebURL,
   Client,
