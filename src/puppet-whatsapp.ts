@@ -330,10 +330,19 @@ class PuppetWhatsapp extends PUPPET.Puppet {
   /**
     * Tag
     */
-  override tagContactAdd = tagContactAdd
-  override tagContactRemove = tagContactRemove
-  override tagContactDelete = tagContactDelete
-  override tagContactList = tagContactList
+  override tagContactTagAdd = tagContactTagAdd
+  override tagContactTagRemove = tagContactTagRemove
+  override tagContactTagList = tagContactTagList
+
+  override tagGroupAdd = tagGroupAdd
+  override tagGroupDelete = tagGroupDelete
+  override tagGroupList = tagGroupList
+  override tagGroupTagList = tagGroupTagList
+
+  override tagTagAdd = tagTagAdd
+  override tagTagDelete = tagTagDelete
+  override tagTagList = tagTagList
+  override tagTagContactList = tagTagContactList
 
 }
 
