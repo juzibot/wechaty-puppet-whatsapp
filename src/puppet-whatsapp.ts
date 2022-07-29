@@ -37,7 +37,7 @@ import { conversationReadMark } from './puppet-mixin/conversation.js'
 import { friendshipRawPayload, friendshipRawPayloadParser, friendshipSearchPhone, friendshipSearchWeixin, friendshipAdd, friendshipAccept, friendshipSearchHandle } from './puppet-mixin/friendship.js'
 import { messageContact, messageImage, messageRecall, messageFile, messageUrl, messageMiniProgram, messageSendText, messageSendFile, messageSendContact, messageSendUrl, messageSendMiniProgram, messageForward, messageRawPayloadParser, messageRawPayload, messagePost, messageSendChannel, messageChannel } from './puppet-mixin/message.js'
 import { roomRawPayloadParser, roomRawPayload, roomList, roomDel, roomAvatar, roomAdd, roomTopic, roomCreate, roomQuit, roomQRCode, roomMemberList, roomMemberRawPayload, roomMemberRawPayloadParser, roomAnnounce, roomInvitationAccept, roomInvitationRawPayload, roomInvitationRawPayloadParser } from './puppet-mixin/room.js'
-import { tagContactAdd, tagContactRemove, tagContactDelete, tagContactList } from './puppet-mixin/tag.js'
+import { tagContactTagAdd, tagContactTagList, tagContactTagRemove, tagGroupAdd, tagGroupDelete, tagGroupList, tagGroupTagList, tagTagAdd, tagTagContactList, tagTagDelete, tagTagList } from './puppet-mixin/tag.js'
 
 // import { Attachment } from './mock/user/types'
 type ManagerWithRequestManager = Manager & RequestManagerAPIs
