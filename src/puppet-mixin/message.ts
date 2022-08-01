@@ -9,6 +9,7 @@ import type {
 } from '../schema/whatsapp-type.js'
 import {
   MessageMedia,
+  MessageTypes,
   MessageTypes as WhatsAppMessageType,
 } from '../schema/whatsapp-interface.js'
 import { WA_ERROR_TYPE } from '../exception/error-type.js'
@@ -299,6 +300,33 @@ export async function messageSendMiniProgram (this: PuppetWhatsApp, conversation
 export async function messageSendChannel (this: PuppetWhatsApp, conversationId: string, channelPayload: PUPPET.payloads.Channel): Promise<void> {
   log.verbose(PRE, 'messageSendChannel(%s, %s)', conversationId, JSON.stringify(channelPayload))
   return PUPPET.throwUnsupportedError()
+}
+
+export async function messageSendLocation (this: PuppetWhatsApp, conversationId: string, locationPayload: PUPPET.payloads.Location): Promise<string> {
+  log.verbose(PRE, 'messageSendLocation(%s, %s)', conversationId, JSON.stringify(locationPayload))
+  throw PUPPET.throwUnsupportedError()
+
+  // const location = new Location(locationPayload.latitude, locationPayload.longitude, `${locationPayload.name}\n${locationPayload.address}`)
+  // return messageSend.call(this, conversationId, location)
+
+  // can send via whatsapp-web.js, however whatsapp-web itself does not offer location sending, so that the message cannot reach the server
+}
+
+export async function messageLocation (this: PuppetWhatsApp, messageId: string): Promise<PUPPET.payloads.Location> {
+  log.verbose(PRE, 'messageLocation(%s)', messageId)
+
+  const msg = await this.messageRawPayload(messageId)
+  if (msg.type !== MessageTypes.LOCATION) {
+    throw WAError(WA_ERROR_TYPE.ERR_MSG_NOT_MATCH, `Message ${messageId} is not a location message`)
+  }
+
+  return {
+    accuracy: 15,
+    address: msg.location?.description?.split('\n')[1] || '',
+    latitude: Number(msg.location?.latitude || 0),
+    longitude: Number(msg.location?.longitude || 0),
+    name: msg.location?.description?.split('\n')[0] || '',
+  }
 }
 
 export async function messageForward (this: PuppetWhatsApp, conversationId: string, messageId: string): Promise<void> {

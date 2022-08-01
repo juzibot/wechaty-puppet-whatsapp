@@ -35,9 +35,9 @@ import { contactSelfQRCode, contactSelfName, contactSelfSignature } from './pupp
 import { contactAlias, contactPhone, contactCorporationRemark, contactDescription, contactList, contactAvatar, contactRawPayloadParser, contactRawPayload } from './puppet-mixin/contact.js'
 import { conversationReadMark } from './puppet-mixin/conversation.js'
 import { friendshipRawPayload, friendshipRawPayloadParser, friendshipSearchPhone, friendshipSearchWeixin, friendshipAdd, friendshipAccept, friendshipSearchHandle } from './puppet-mixin/friendship.js'
-import { messageContact, messageImage, messageRecall, messageFile, messageUrl, messageMiniProgram, messageSendText, messageSendFile, messageSendContact, messageSendUrl, messageSendMiniProgram, messageForward, messageRawPayloadParser, messageRawPayload, messagePost, messageSendChannel, messageChannel } from './puppet-mixin/message.js'
+import { messageContact, messageImage, messageRecall, messageFile, messageUrl, messageMiniProgram, messageSendText, messageSendFile, messageSendContact, messageSendUrl, messageSendMiniProgram, messageForward, messageRawPayloadParser, messageRawPayload, messagePost, messageSendChannel, messageChannel, messageSendLocation, messageLocation } from './puppet-mixin/message.js'
 import { roomRawPayloadParser, roomRawPayload, roomList, roomDel, roomAvatar, roomAdd, roomTopic, roomCreate, roomQuit, roomQRCode, roomMemberList, roomMemberRawPayload, roomMemberRawPayloadParser, roomAnnounce, roomInvitationAccept, roomInvitationRawPayload, roomInvitationRawPayloadParser } from './puppet-mixin/room.js'
-import { tagContactAdd, tagContactRemove, tagContactDelete, tagContactList } from './puppet-mixin/tag.js'
+import { tagContactTagAdd, tagContactTagList, tagContactTagRemove, tagGroupAdd, tagGroupDelete, tagGroupList, tagGroupTagList, tagTagAdd, tagTagContactList, tagTagDelete, tagTagList } from './puppet-mixin/tag.js'
 
 // import { Attachment } from './mock/user/types'
 type ManagerWithRequestManager = Manager & RequestManagerAPIs
@@ -290,6 +290,8 @@ class PuppetWhatsapp extends PUPPET.Puppet {
   override messageSendUrl = messageSendUrl
   override messageSendMiniProgram = messageSendMiniProgram
   override messageSendChannel = messageSendChannel
+  override messageSendLocation = messageSendLocation
+  override messageLocation = messageLocation
   override messageForward = messageForward
 
   override messageRawPayloadParser = messageRawPayloadParser
@@ -330,10 +332,19 @@ class PuppetWhatsapp extends PUPPET.Puppet {
   /**
     * Tag
     */
-  override tagContactAdd = tagContactAdd
-  override tagContactRemove = tagContactRemove
-  override tagContactDelete = tagContactDelete
-  override tagContactList = tagContactList
+  override tagContactTagAdd = tagContactTagAdd
+  override tagContactTagRemove = tagContactTagRemove
+  override tagContactTagList = tagContactTagList
+
+  override tagGroupAdd = tagGroupAdd
+  override tagGroupDelete = tagGroupDelete
+  override tagGroupList = tagGroupList
+  override tagGroupTagList = tagGroupTagList
+
+  override tagTagAdd = tagTagAdd
+  override tagTagDelete = tagTagDelete
+  override tagTagList = tagTagList
+  override tagTagContactList = tagTagContactList
 
 }
 
