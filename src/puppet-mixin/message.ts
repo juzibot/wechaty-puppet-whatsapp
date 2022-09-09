@@ -132,12 +132,12 @@ export async function messageImage (this: PuppetWhatsApp, messageId: string, ima
         if (msg.hasMedia) {
           return downloadMedia.call(this, msg)
         } else {
-          return FileBox.fromBase64(msg.body, 'thumbnail.jpg')
+          return FileBox.fromBase64(msg._data.body, 'thumbnail.jpg')
         }
       case PUPPET.types.Image.Thumbnail:
       default:
-        if (msg.body) {
-          return FileBox.fromBase64(msg.body, 'thumbnail.jpg')
+        if (msg._data.body) {
+          return FileBox.fromBase64(msg._data.body, 'thumbnail.jpg')
         } else {
           return downloadMedia.call(this, msg)
         }
