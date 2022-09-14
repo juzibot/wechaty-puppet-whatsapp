@@ -1,3 +1,5 @@
+/* eslint-disable sort-keys */
+/* eslint-disable no-console */
 /**
  *   Wechaty - https://github.com/chatie/wechaty
  *
@@ -27,7 +29,13 @@ import { PuppetWhatsapp } from '../src/mod.js'
  * 1. Declare your Bot!
  *
  */
-const puppet = new PuppetWhatsapp()
+const puppet = new PuppetWhatsapp({
+  puppeteerOptions: {
+    puppeteer: {
+      headless: false,
+    },
+  },
+})
 
 /**
  *
@@ -104,8 +112,20 @@ function onError (payload: PUPPET.payloads.EventError) {
  */
 async function onMessage (payload: PUPPET.payloads.EventMessage) {
   const msgPayload = await puppet.messagePayload(payload.messageId)
+  // eslint-disable-next-line no-console
+  console.log(msgPayload)
+  if (msgPayload.type === 8) {
+    console.log(await puppet.messageLocation(msgPayload.id))
+  }
   if ((/ding/i.test(msgPayload.text || ''))) {
     await puppet.messageSendText(msgPayload.talkerId!, 'dong')
+    await puppet.messageSendLocation(msgPayload.talkerId!, {
+      latitude: -37.8773906,
+      longitude: 145.0449860,
+      name: 'Monash University',
+      accuracy: 15,
+      address: 'Melbourne Victoria Australia',
+    })
   }
 }
 
