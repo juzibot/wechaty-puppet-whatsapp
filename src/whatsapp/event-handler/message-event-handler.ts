@@ -44,7 +44,8 @@ export default class MessageEventHandler extends WhatsAppBase {
       return
     }
     await cacheManager.setMessageRawPayload(messageId, message)
-    if ((message as WhatsAppMessagePayload)._data?.caption) { // see issue: https://github.com/wechaty/puppet-whatsapp/issues/390
+    if ((message as WhatsAppMessagePayload)._data?.caption && (/(.(jpg|jpeg|png)$|image\/(jpg|jpeg|png))/i.test((message as WhatsAppMessagePayload)._data?.mimetype))) { // see issue: https://github.com/wechaty/puppet-whatsapp/issues/390
+      // file message also have captions, but no text message should be generated
       const genTextMessageFromImageMessage = message as WhatsAppMessagePayload
       genTextMessageFromImageMessage.type = WhatsAppMessageType.TEXT
       const textMsgId = `${genTextMessageFromImageMessage.id.id}_TEXT`
