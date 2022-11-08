@@ -23,14 +23,17 @@ export function parserContactRawPayload (contactPayload: WhatsAppContactPayload,
     name = contactPayload.pushname || contactPayload.name
   }
 
+  const number = contactPayload.number || contactPayload.id.user
+
   return {
     avatar: contactPayload.avatar,
     friend: contactPayload.isMyContact && contactPayload.isUser,
     gender: PUPPET.types.ContactGender.Unknown,
     id: contactPayload.id._serialized,
     name: name || contactPayload.id._serialized,
-    phone: [contactPayload.number],
+    phone: [number],
     type: type,
-    weixin: contactPayload.number,
+    weixin: number,
+    handle: number,
   }
 }
