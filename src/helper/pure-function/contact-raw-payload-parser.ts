@@ -33,7 +33,7 @@ export function parserContactRawPayload (contactPayload: WhatsAppContactPayload,
     name: name || contactPayload.id._serialized,
     phone: [number],
     type: type,
-    weixin: number,
     handle: number,
+    weixin: number,
   }
 }

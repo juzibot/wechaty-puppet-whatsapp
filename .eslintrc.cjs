@@ -5,7 +5,8 @@ const rules = {
     {
       "checksVoidReturn": false
     }
-  ]
+  ],
+  "sort-keys": "off",
 }
 
 module.exports = {
