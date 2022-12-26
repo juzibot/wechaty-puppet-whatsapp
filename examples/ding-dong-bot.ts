@@ -18,7 +18,7 @@
  *   limitations under the License.
  *
  */
-import type * as PUPPET from '@juzi/wechaty-puppet'
+import * as PUPPET from '@juzi/wechaty-puppet'
 
 import qrTerm from 'qrcode-terminal'
 
@@ -48,6 +48,7 @@ puppet
   .on('scan',   onScan)
   .on('error',  onError)
   .on('message', onMessage)
+  .on('dirty', onDirty)
 
 /**
  *
@@ -126,6 +127,15 @@ async function onMessage (payload: PUPPET.payloads.EventMessage) {
       accuracy: 15,
       address: 'Melbourne Victoria Australia',
     })
+  }
+}
+
+async function onDirty (payload: PUPPET.payloads.EventDirty) {
+  console.log(`onDirty(${JSON.stringify(payload)})`)
+  if (payload.payloadType === PUPPET.types.Dirty.Contact) {
+    const contactId = payload.payloadId
+    const contact = await puppet.contactPayload(contactId)
+    console.log('updated contact: ', JSON.stringify(contact))
   }
 }
 
