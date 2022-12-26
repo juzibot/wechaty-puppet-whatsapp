@@ -102,7 +102,9 @@ class PuppetWhatsapp extends PUPPET.Puppet {
 
   private async startManager (manager: Manager) {
     manager.on({
-      dirty: this.onDirty.bind(this),
+      dirty: data => {
+        this.emit('dirty', data)
+      },
       error: this.onError.bind(this),
       friendship: this.onFriendship.bind(this),
       heartbeat: data => this.emit('heartbeat', {
