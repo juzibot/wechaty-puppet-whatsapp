@@ -18,6 +18,7 @@ import { fromEvent, map, merge, distinctUntilKeyChanged } from 'rxjs'
 import LoginEventHandler from './event-handler/login-event-handler.js'
 import MessageEventHandler from './event-handler/message-event-handler.js'
 import GroupEventHandler from './event-handler/group-event-handler.js'
+import ContactEventHandler from './event-handler/contact-event-handler.js'
 
 const PRE = 'WhatsAppManager'
 
@@ -26,12 +27,14 @@ export default class WhatsAppManager extends WhatsAppBase {
   private botEventHandler: LoginEventHandler
   private messageEventHandler: MessageEventHandler
   private groupEventHandler: GroupEventHandler
+  private contactEventHandler: ContactEventHandler
 
   constructor (manager: Manager) {
     super(manager)
     this.botEventHandler = new LoginEventHandler(manager)
     this.messageEventHandler = new MessageEventHandler(manager)
     this.groupEventHandler = new GroupEventHandler(manager)
+    this.contactEventHandler = new ContactEventHandler(manager)
 
     this.botEventHandler.on({
       login: data => this.emit('login', data),
@@ -50,6 +53,10 @@ export default class WhatsAppManager extends WhatsAppBase {
       'room-join': data => this.emit('room-join', data),
       'room-leave': data => this.emit('room-leave', data),
       'room-topic': data => this.emit('room-topic', data),
+    })
+
+    this.contactEventHandler.on({
+      dirty: data => this.emit('dirty', data),
     })
   }
 
@@ -127,6 +134,8 @@ export default class WhatsAppManager extends WhatsAppBase {
     whatsAppClient.on('group_join', this.groupEventHandler.onRoomJoin.bind(this.groupEventHandler))
     whatsAppClient.on('group_leave', this.groupEventHandler.onRoomLeave.bind(this.groupEventHandler))
     whatsAppClient.on('group_update', this.groupEventHandler.onRoomUpdate.bind(this.groupEventHandler))
+
+    whatsAppClient.on('contact_name_change', this.contactEventHandler.onContactNameChange.bind(this.contactEventHandler))
 
     const events = [
       'authenticated',
