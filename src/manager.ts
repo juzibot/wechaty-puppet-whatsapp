@@ -12,6 +12,7 @@ import { RequestManager, requestManagerKeys } from './request/request-manager.js
 import { MessageAck } from './schema/whatsapp-interface.js'
 import type { GroupChat, WhatsAppContact, WhatsAppMessage } from './schema/whatsapp-type.js'
 import WhatsAppManager from './whatsapp/whatsapp-manager.js'
+import * as PUPPET from '@juzi/wechaty-puppet'
 
 const PRE = 'Manager'
 
@@ -42,6 +43,7 @@ export default class Manager extends EE<ManagerEvents> {
       'room-leave': data => this.emit('room-leave', data),
       'room-topic': data => this.emit('room-topic', data),
       scan: data => this.emit('scan', data),
+      dirty: data => this.onDirty(data),
     })
 
     return new Proxy(this, {
@@ -293,6 +295,23 @@ export default class Manager extends EE<ManagerEvents> {
         this.asystoleCount = 0
       }
     }
+  }
+
+  async onDirty (data: PUPPET.payloads.EventDirty) {
+    log.info(PRE, `onDirty(${JSON.stringify(data)})`)
+    switch (data.payloadType) {
+      case PUPPET.types.Dirty.Contact: {
+        const contactId = data.payloadId
+        const rawContact = await this.requestManager.getContactById(contactId)
+        const avatar = await rawContact.getProfilePicUrl() || ''
+        const contact = Object.assign(rawContact, { avatar })
+        await this.cacheManager?.setContactOrRoomRawPayload(contactId, contact)
+        break
+      }
+      default:
+        break
+    }
+    this.emit('dirty', data)
   }
 
 }
