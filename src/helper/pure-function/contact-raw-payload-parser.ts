@@ -20,7 +20,12 @@ export function parserContactRawPayload (contactPayload: WhatsAppContactPayload,
       name = contactPayload.shortName
     }
   } else {
-    name = contactPayload.pushname || contactPayload.name
+    /**
+     * 在 iOS 中， pushname 是联系人自己设置的名字， name 是bot通讯录中联系人的名字
+     * 在 Android 中， pushname 是 undefined ， name 是bot通讯录中联系人的名字
+     * 因此应该优先使用 name
+     */
+    name = contactPayload.name || contactPayload.pushname
   }
 
   const number = contactPayload.number || contactPayload.id.user
