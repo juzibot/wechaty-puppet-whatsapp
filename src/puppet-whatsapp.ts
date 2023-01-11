@@ -34,7 +34,7 @@ import { RequestPool } from './request/request-pool.js'
 import { contactSelfQRCode, contactSelfName, contactSelfSignature } from './puppet-mixin/contact-self.js'
 import { contactAlias, contactPhone, contactCorporationRemark, contactDescription, contactList, contactAvatar, contactRawPayloadParser, contactRawPayload } from './puppet-mixin/contact.js'
 import { conversationReadMark } from './puppet-mixin/conversation.js'
-import { friendshipRawPayload, friendshipRawPayloadParser, friendshipSearchPhone, friendshipSearchWeixin, friendshipAdd, friendshipAccept, friendshipSearchHandle } from './puppet-mixin/friendship.js'
+import { friendshipRawPayload, friendshipRawPayloadParser, friendshipSearchPhone, friendshipSearchWeixin, friendshipAdd, friendshipAccept, friendshipSearchHandle, getFriendshipFromContactData } from './puppet-mixin/friendship.js'
 import { messageContact, messageImage, messageRecall, messageFile, messageUrl, messageMiniProgram, messageSendText, messageSendFile, messageSendContact, messageSendUrl, messageSendMiniProgram, messageForward, messageRawPayloadParser, messageRawPayload, messagePost, messageSendChannel, messageChannel, messageSendLocation, messageLocation } from './puppet-mixin/message.js'
 import { roomRawPayloadParser, roomRawPayload, roomList, roomDel, roomAvatar, roomAdd, roomTopic, roomCreate, roomQuit, roomQRCode, roomMemberList, roomMemberRawPayload, roomMemberRawPayloadParser, roomAnnounce, roomInvitationAccept, roomInvitationRawPayload, roomInvitationRawPayloadParser } from './puppet-mixin/room.js'
 import { tagContactTagAdd, tagContactTagList, tagContactTagRemove, tagGroupAdd, tagGroupDelete, tagGroupList, tagGroupTagList, tagTagAdd, tagTagContactList, tagTagDelete, tagTagList } from './puppet-mixin/tag.js'
@@ -197,7 +197,13 @@ class PuppetWhatsapp extends PUPPET.Puppet {
   }
 
   private async onFriendship (payload: PUPPET.payloads.EventFriendship): Promise<void> {
-    const contactId = await this.messageContact(payload.friendshipId)
+    let contactId: string
+    if (payload.friendshipId.startsWith('friendshipFromContact-')) {
+      // friendship from friendshipAdd
+      contactId = getFriendshipFromContactData(payload.friendshipId).contactId
+    } else {
+      contactId = await this.messageContact(payload.friendshipId)
+    }
     // NOTE: this function automatically put non-contact into cache
     await this.contactRawPayload(contactId)
     this.emit('friendship', payload)
