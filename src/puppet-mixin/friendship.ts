@@ -1,5 +1,5 @@
 import * as PUPPET from '@juzi/wechaty-puppet'
-import { LANGUAGE, log, STRINGS } from '../config.js'
+import { log } from '../config.js'
 import { WA_ERROR_TYPE } from '../exception/error-type.js'
 import WAError from '../exception/whatsapp-error.js'
 import type PuppetWhatsApp from '../puppet-whatsapp.js'
@@ -112,7 +112,7 @@ export async function friendshipAccept (
   return PUPPET.throwUnsupportedError()
 }
 
-export function getFriendshipFromContactData(id: string) {
+export function getFriendshipFromContactData (id: string) {
   if (!id.startsWith('friendshipFromContact-')) {
     throw WAError(WA_ERROR_TYPE.ERR_CONTACT_NOT_FOUND, 'Not a friendshipFromContact id', `id: ${id}`)
   }
