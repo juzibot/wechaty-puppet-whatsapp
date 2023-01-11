@@ -77,7 +77,14 @@ export async function friendshipAdd (
 
   await this.contactRawPayload(contactId)
 
-  await this.messageSendText(contactId, hello)
+  if (hello) {
+    await this.messageSendText(contactId, hello)
+  }
+
+  this.emit('friendship', {
+    friendshipId: `friendshipFromContact-${contactId}`,
+  })
+
 }
 
 export async function friendshipAccept (
