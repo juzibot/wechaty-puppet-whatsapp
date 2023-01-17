@@ -93,14 +93,13 @@ export async function friendshipAdd (
 
   const contactPayload = await this.contactRawPayload(contactId)
 
-  let messageId
   if (hello) {
-    messageId = await this.messageSendText(contactId, hello)
+    await this.messageSendText(contactId, hello)
   }
 
   if (!(await this.contactRawPayloadParser(contactPayload)).friend) {
     this.emit('friendship', {
-      friendshipId: messageId || `friendshipFromContact-${contactId}-timestamp-${String(Date.now())}`,
+      friendshipId: `friendshipFromContact-${contactId}-timestamp-${String(Date.now())}`,
     })
   }
 }

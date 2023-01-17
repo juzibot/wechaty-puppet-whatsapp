@@ -38,7 +38,14 @@ export default class MessageEventHandler extends WhatsAppBase {
       return
     }
     const messageId = message.id.id
-    const cacheManager = await this.manager.getCacheManager()
+    let cacheManager
+    try {
+      cacheManager = await this.manager.getCacheManager()
+    } catch (e) {}
+    if (!cacheManager) {
+      // message comes before login process finished
+      return
+    }
     const messageInCache = await cacheManager.getMessageRawPayload(messageId)
     if (messageInCache) {
       return
