@@ -2,7 +2,7 @@
   "extends": "@chatie/tsconfig",
   "compilerOptions": {
     "outDir": "dist/esm",
-    // "ignoreDeprecations": "5.0"
+    "ignoreDeprecations": "5.0"
     // importsNotUsedAsValues in @chatie/tsconfig is deprecated
   },
   "exclude": [
