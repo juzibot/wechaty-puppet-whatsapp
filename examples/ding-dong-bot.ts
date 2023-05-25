@@ -120,13 +120,13 @@ async function onMessage (payload: PUPPET.payloads.EventMessage) {
   }
   if ((/ding/i.test(msgPayload.text || ''))) {
     await puppet.messageSendText(msgPayload.talkerId!, 'dong')
-    await puppet.messageSendLocation(msgPayload.talkerId!, {
-      latitude: -37.8773906,
-      longitude: 145.0449860,
-      name: 'Monash University',
-      accuracy: 15,
-      address: 'Melbourne Victoria Australia',
-    })
+    // await puppet.messageSendLocation(msgPayload.talkerId!, {
+    //   latitude: -37.8773906,
+    //   longitude: 145.0449860,
+    //   name: 'Monash University',
+    //   accuracy: 15,
+    //   address: 'Melbourne Victoria Australia',
+    // })
   }
 }
 
