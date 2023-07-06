@@ -1,6 +1,6 @@
 {
   "name": "@juzi/wechaty-puppet-whatsapp",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "Wechaty Puppet for WhatsApp",
   "type": "module",
   "exports": {
@@ -52,12 +52,13 @@
     "@chatie/eslint-config": "1.0.4",
     "@chatie/semver": "^0.4.7",
     "@chatie/tsconfig": "4.6.3",
-    "@juzi/wechaty-puppet": "^1.0.30",
+    "@juzi/wechaty-puppet": "^1.0.58",
     "@types/cuid": "^2.0.1",
     "@types/fs-extra": "^9.0.13",
     "@types/mime": "^2.0.3",
     "@types/node-schedule": "^1.3.2",
     "@types/qrcode-terminal": "^0.12.0",
+    "@types/uuid": "^9.0.2",
     "qrcode-terminal": "^0.12.0",
     "tstest": "^1.2.8"
   },
@@ -65,7 +66,7 @@
     "@juzi/wechaty-puppet": "^1.0.15"
   },
   "dependencies": {
-    "@juzi/whatsapp-web.js": "^1.20.0",
+    "@juzi/whatsapp-web.js": "^1.21.2",
     "ee-ts": "^1.0.2",
     "flash-store": "^1.0.6",
     "fs-extra": "^10.0.1",
@@ -73,7 +74,8 @@
     "mime": "^3.0.0",
     "node-schedule": "^2.1.0",
     "rxjs": "^7.5.5",
-    "type-fest": "^2.12.2"
+    "type-fest": "^2.12.2",
+    "uuid": "^9.0.0"
   },
   "files": [
     "bin/",
