@@ -10,6 +10,8 @@ import type {
 import {
   MessageMedia,
   MessageTypes,
+  ProductMessage,
+  UrlLink,
   MessageTypes as WhatsAppMessageType,
 } from '../schema/whatsapp-interface.js'
 import { WA_ERROR_TYPE } from '../exception/error-type.js'
@@ -287,14 +289,21 @@ export async function messageSendUrl (
   this: PuppetWhatsApp,
   conversationId: string,
   urlLinkPayload: PUPPET.payloads.UrlLink,
-): Promise<string> {
+): Promise<string | void> {
   log.verbose(PRE, 'messageSendUrl(%s, %s)', conversationId, JSON.stringify(urlLinkPayload))
-  return messageSend.call(this, conversationId, urlLinkPayload.url, {}, DEFAULT_TIMEOUT.MESSAGE_SEND_TEXT)
+
+  const urlLink = new UrlLink(urlLinkPayload.url, urlLinkPayload.title, urlLinkPayload.description, urlLinkPayload.thumbnailUrl ? await MessageMedia.fromUrl(urlLinkPayload.thumbnailUrl) : undefined)
+  return messageSend.call(this, conversationId, urlLink, {}, DEFAULT_TIMEOUT.MESSAGE_SEND_TEXT)
 }
 
-export async function messageSendMiniProgram (this: PuppetWhatsApp, conversationId: string, miniProgramPayload: PUPPET.payloads.MiniProgram): Promise<void> {
+export async function messageSendMiniProgram (this: PuppetWhatsApp, conversationId: string, miniProgramPayload: PUPPET.payloads.MiniProgram): Promise<string | void> {
   log.verbose(PRE, 'messageSendMiniProgram(%s, %s)', conversationId, JSON.stringify(miniProgramPayload))
-  return PUPPET.throwUnsupportedError()
+
+  if (!miniProgramPayload.username || !miniProgramPayload.appid) {
+    throw new Error('a miniProgramPayload must have username and appid')
+  }
+  const productMessage = new ProductMessage(miniProgramPayload.username, miniProgramPayload.appid, miniProgramPayload.title, miniProgramPayload.description, miniProgramPayload.thumbUrl ? await MessageMedia.fromUrl(miniProgramPayload.thumbUrl) : undefined)
+  return messageSend.call(this, conversationId, productMessage, {}, DEFAULT_TIMEOUT.MESSAGE_SEND_TEXT)
 }
 
 export async function messageSendChannel (this: PuppetWhatsApp, conversationId: string, channelPayload: PUPPET.payloads.Channel): Promise<void> {
