@@ -25,6 +25,7 @@ import { convertMessagePayloadToClass } from '../helper/pure-function/convert-fu
 import { parserMessageRawPayload } from '../helper/pure-function/message-raw-payload-parser.js'
 import { parseVcard } from '../helper/pure-function/vcard-parser.js'
 import { RequestPool } from '../request/request-pool.js'
+import { getMessageMediaFromFilebox } from '../helper/pure-function/messageMedia.js'
 
 const PRE = 'MIXIN_MESSAGE'
 
@@ -195,15 +196,17 @@ export async function messageUrl (this: PuppetWhatsApp, messageId: string): Prom
     log.error(PRE, 'Message %s not found', messageId)
     throw WAError(WA_ERROR_TYPE.ERR_MSG_NOT_FOUND, `Message ${messageId} Not Found`)
   }
-  if (msg.links.length === 0) {
+  if (!msg.urlLink) {
     log.error(PRE, 'Message %s is does not contain links', messageId)
     throw WAError(WA_ERROR_TYPE.ERR_MSG_NOT_MATCH, `Message ${messageId} does not contain any link message.`)
   }
   try {
+    const thumbnail = FileBox.fromBase64(msg._data.thumbnail, 'thumbnail.jpg')
     return {
-      description: msg.description || 'NO_DESCRIPTION',
-      title: msg.title || 'NO_TITLE',
-      url: msg.links[0]?.link || msg.body,
+      description: msg.urlLink.description || 'no description',
+      title: msg.urlLink.title || 'no title',
+      url: msg.urlLink.url || 'no url',
+      thumbnailFileBox: thumbnail,
     }
   } catch (error) {
     throw WAError(WA_ERROR_TYPE.ERR_MSG_URL_LINK, `Get link message: ${messageId} failed, error: ${(error as Error).message}`)
@@ -216,7 +219,30 @@ export async function messageUrl (this: PuppetWhatsApp, messageId: string): Prom
 */
 export async function messageMiniProgram (this: PuppetWhatsApp, messageId: string): Promise<PUPPET.payloads.MiniProgram> {
   log.verbose(PRE, 'messageMiniProgram(%s)', messageId)
-  return PUPPET.throwUnsupportedError()
+  const cacheManager = await this.manager.getCacheManager()
+  const msg = await cacheManager.getMessageRawPayload(messageId)
+
+  if (!msg) {
+    log.error(PRE, 'Message %s not found', messageId)
+    throw WAError(WA_ERROR_TYPE.ERR_MSG_NOT_FOUND, `Message ${messageId} Not Found`)
+  }
+  if (!msg.productMessage) {
+    log.error(PRE, 'Message %s is does not contain mini program', messageId)
+    throw WAError(WA_ERROR_TYPE.ERR_MSG_NOT_MATCH, `Message ${messageId} does not contain any mini program.`)
+  }
+
+  try {
+    const thumbnail = await downloadMedia.call(this, msg)
+    return {
+      username: msg.productMessage.businessOwnerJid,
+      appid: msg.productMessage.productId,
+      title: msg.productMessage.title || 'no title',
+      description: msg.productMessage.description || 'no description',
+      thumbnailFileBox: thumbnail,
+    }
+  } catch (error) {
+    throw WAError(WA_ERROR_TYPE.ERR_MSG_MINI_PROGRAM, `Get miniprogram message: ${messageId} failed, error: ${(error as Error).message}`)
+  }
 }
 
 export async function messageChannel (this: PuppetWhatsApp, messageId: string): Promise<PUPPET.payloads.Channel> {
@@ -292,7 +318,13 @@ export async function messageSendUrl (
 ): Promise<string | void> {
   log.verbose(PRE, 'messageSendUrl(%s, %s)', conversationId, JSON.stringify(urlLinkPayload))
 
-  const urlLink = new UrlLink(urlLinkPayload.url, urlLinkPayload.title, urlLinkPayload.description, urlLinkPayload.thumbnailUrl ? await MessageMedia.fromUrl(urlLinkPayload.thumbnailUrl) : undefined)
+  let media
+  if (urlLinkPayload.thumbnailUrl) {
+    media = await MessageMedia.fromUrl(urlLinkPayload.thumbnailUrl)
+  } else if (urlLinkPayload.thumbnailFileBox) {
+    media = await getMessageMediaFromFilebox(urlLinkPayload.thumbnailFileBox)
+  }
+  const urlLink = new UrlLink(urlLinkPayload.url, urlLinkPayload.title, urlLinkPayload.description, media)
   return messageSend.call(this, conversationId, urlLink, {}, DEFAULT_TIMEOUT.MESSAGE_SEND_TEXT)
 }
 
@@ -302,7 +334,13 @@ export async function messageSendMiniProgram (this: PuppetWhatsApp, conversation
   if (!miniProgramPayload.username || !miniProgramPayload.appid) {
     throw new Error('a miniProgramPayload must have username and appid')
   }
-  const productMessage = new ProductMessage(miniProgramPayload.username, miniProgramPayload.appid, miniProgramPayload.title, miniProgramPayload.description, miniProgramPayload.thumbUrl ? await MessageMedia.fromUrl(miniProgramPayload.thumbUrl) : undefined)
+  let media
+  if (miniProgramPayload.thumbUrl) {
+    media = await MessageMedia.fromUrl(miniProgramPayload.thumbUrl)
+  } else if (miniProgramPayload.thumbnailFileBox) {
+    media = await getMessageMediaFromFilebox(miniProgramPayload.thumbnailFileBox)
+  }
+  const productMessage = new ProductMessage(miniProgramPayload.username, miniProgramPayload.appid, miniProgramPayload.title, miniProgramPayload.description, media)
   return messageSend.call(this, conversationId, productMessage, {}, DEFAULT_TIMEOUT.MESSAGE_SEND_TEXT)
 }
 

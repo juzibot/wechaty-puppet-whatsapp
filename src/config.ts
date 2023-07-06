@@ -3,6 +3,10 @@ import {
   MessageTypes as WhatsAppMessageType,
 } from './schema/whatsapp-interface.js'
 import { packageJson } from './package-json.js'
+
+import os from 'os'
+import path from 'path'
+import { mkdirpSync } from 'fs-extra'
 export { log } from '@juzi/wechaty-puppet'
 export {
   FileBox,
@@ -17,6 +21,15 @@ const PRE = 'PuppetWhatsApp'
 export const SPECIAL_BOT_PUSHNAME = '-' // FIXME: pushname is '-', see: https://github.com/wechaty/puppet-whatsapp/issues/233
 
 export const MIN_BATTERY_VALUE_FOR_LOGOUT = Number(process.env['MIN_BATTERY_VALUE_FOR_LOGOUT']) || 1
+
+export const TEMP_FILE_PATH = path.join(
+  os.homedir(),
+  '.wechaty',
+  'puppet-whatsapp',
+  'temp',
+)
+
+mkdirpSync(TEMP_FILE_PATH)
 
 export const MessageMediaTypeList = [
   // WhatsAppMessageType.CONTACT_CARD_MULTI,

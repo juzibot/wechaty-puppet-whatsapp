@@ -23,6 +23,7 @@ enum MESSAGE_ERROR_TYPE {
   ERR_MSG_URL_LINK = 2009,  // 提取链接消息异常
   ERR_MSG_FORWARD = 2010,  // 转发消息异常
   ERR_MSG_IMAGE_WITHOUT_BODY = 2011,  // 图片消息中不包含缩率图信息
+  ERR_MSG_MINI_PROGRAM = 2012,  // 提取产品信息异常
 }
 
 enum ROOM_ERROR_TYPE {

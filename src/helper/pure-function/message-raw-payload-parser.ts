@@ -71,7 +71,7 @@ function getMessageType (messagePayload: WhatsAppMessagePayload): PUPPET.types.M
 
   switch (messagePayload.type) {
     case WhatsAppMessageType.TEXT:
-      if (messagePayload.title || messagePayload.description) {
+      if (messagePayload.urlLink) {
         type = PUPPET.types.Message.Url
       } else if (messagePayload.isStatus) {
         type = PUPPET.types.Message.Post
@@ -113,6 +113,9 @@ function getMessageType (messagePayload: WhatsAppMessagePayload): PUPPET.types.M
       break
     case WhatsAppMessageType.REVOKED:
       type = PUPPET.types.Message.Recalled
+      break
+    case WhatsAppMessageType.PRODUCT:
+      type = PUPPET.types.Message.MiniProgram
       break
   }
   return type

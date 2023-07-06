@@ -28,7 +28,7 @@ export interface IVcard {
 
 const VersionPattern =  /VERSION:(\d+\.\d*)$/m
 const CheckItermTelPattern = /^(item\d\.TEL|TEL;)/i
-const TelPatternForContainOnePhoneNumber = /waid=(\d*):([+ \d]*)$/m
+const TelPatternForContainOnePhoneNumber = /waid=(\d*):([+ \d()-]*)$/m
 const TelPatternForContainMultiPhoneNumbers = /[+ \d]*$/m
 
 /*
@@ -59,8 +59,19 @@ item1.X-ABLabel:‎WhatsApp | 手机 | 公费电话
 END:VCARD
 
 For more detail, see: https://github.com/wechaty/puppet-whatsapp/issues/136#issuecomment-1032388884
-*/
 
+# Business Account:
+'BEGIN:VCARD',
+'VERSION:3.0',
+'N:;Liquido;;;',
+'FN:Liquido',
+'X-WA-BIZ-NAME:Liquido',
+'X-WA-BIZ-DESCRIPTION:Grow your business with Liquido WhatsApp Store',
+'ORG:Liquido;',
+'TEL;type=CELL;type=VOICE;waid=14692648170:+1 (469) 264-8170',
+'END:VCARD'
+
+*/
 /**
  * parse vcard body
  * @param body vcard body string
