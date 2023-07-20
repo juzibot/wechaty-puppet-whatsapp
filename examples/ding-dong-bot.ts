@@ -49,6 +49,7 @@ puppet
   .on('error',  onError)
   .on('message', onMessage)
   .on('dirty', onDirty)
+  .on('ready', onReady)
 
 /**
  *
@@ -137,6 +138,10 @@ async function onDirty (payload: PUPPET.payloads.EventDirty) {
     const contact = await puppet.contactPayload(contactId)
     console.log('updated contact: ', JSON.stringify(contact))
   }
+}
+
+async function onReady () {
+  console.log('onReady()')
 }
 
 /**
