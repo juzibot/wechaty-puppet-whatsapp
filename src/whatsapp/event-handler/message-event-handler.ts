@@ -129,6 +129,14 @@ export default class MessageEventHandler extends WhatsAppBase {
         await sleep(100)
       }
       requestPool.resolveRequest(messageId)
+      const receiverId = message.to
+      if (receiverId && isContactId(receiverId)) {
+        const contactIds = await cacheManager.getContactIdList()
+        const notFriend = !contactIds.find(c => c === receiverId)
+        if (notFriend) {
+          this.emit('friendship', { friendshipId: messageId })
+        }
+      }
       this.emit('message', { messageId })
     }
   }
