@@ -28,7 +28,7 @@ test('parse self contact info', async t => {
   t.ok(result.type === PUPPET.types.Contact.Individual, 'should get correct contact type')
   t.ok(result.phone[0] === '8613812345678', 'should get correct phone number')
   t.ok(result.id === '8613812345678@c.us', 'should get correct user id')
-  t.ok(!result.friend, 'should get correct friendship status')
+  t.ok(result.friend, 'should get correct friendship status')
 
   t.pass('parse self contact info pass')
 })
