@@ -61,8 +61,8 @@ export default class MessageEventHandler extends WhatsAppBase {
 
     const contactId = message.from
     if (contactId && isContactId(contactId)) {
-      const contactIds = await cacheManager.getContactIdList()
-      const notFriend = !contactIds.find(c => c === contactId)
+      const contact = await cacheManager.getContactOrRoomRawPayload(contactId)
+      const notFriend = !contact?.isMyContact
       if (notFriend) {
         this.emit('friendship', { friendshipId: messageId })
       }
@@ -131,8 +131,8 @@ export default class MessageEventHandler extends WhatsAppBase {
       requestPool.resolveRequest(messageId)
       const receiverId = message.to
       if (receiverId && isContactId(receiverId)) {
-        const contactIds = await cacheManager.getContactIdList()
-        const notFriend = !contactIds.find(c => c === receiverId)
+        const contact = await cacheManager.getContactOrRoomRawPayload(receiverId)
+        const notFriend = !contact?.isMyContact
         if (notFriend) {
           this.emit('friendship', { friendshipId: messageId })
         }
