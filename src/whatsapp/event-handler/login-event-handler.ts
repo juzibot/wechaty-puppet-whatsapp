@@ -23,6 +23,7 @@ import {
   batchProcess,
   isContactId,
   isRoomId,
+  sleep,
 } from '../../helper/miscellaneous.js'
 
 const PRE = 'LoginEventHandler'
@@ -154,6 +155,7 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
     })
 
     log.info(PRE, `onReady() all contacts and rooms are ready, friendCount: ${friendCount} contactCount: ${contactCount} roomCount: ${roomCount}`)
+    await sleep(15 * 1000)
     this.emit('ready')
     this.loadingData = false
   }
