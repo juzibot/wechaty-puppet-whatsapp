@@ -29,6 +29,7 @@ export default class MessageEventHandler extends WhatsAppBase {
     log.info(PRE, `onMessage(${JSON.stringify(message)})`)
     if (!(await this.checkCacheManager())) {
       log.warn('message ignored because login process is not finished')
+      return
     }
 
     // @ts-ignore
@@ -82,6 +83,7 @@ export default class MessageEventHandler extends WhatsAppBase {
     log.silly(PRE, `onMessageAck(${JSON.stringify(message)})`)
     if (!(await this.checkCacheManager())) {
       log.warn('message ignored because login process is not finished')
+      return
     }
     /**
      * if message ack equal MessageAck.ACK_DEVICE, we could regard it as has already send success.
@@ -115,6 +117,7 @@ export default class MessageEventHandler extends WhatsAppBase {
     log.silly(PRE, `onMessageCreate(${JSON.stringify(message)})`)
     if (!(await this.checkCacheManager())) {
       log.warn('message ignored because login process is not finished')
+      return
     }
     if (message.id.fromMe) {
       const messageId = message.id.id
@@ -216,6 +219,7 @@ export default class MessageEventHandler extends WhatsAppBase {
     log.silly(PRE, `onMessageRevokeEveryone(newMsg: ${JSON.stringify(message)}, originalMsg: ${JSON.stringify(revokedMsg)})`)
     if (!(await this.checkCacheManager())) {
       log.warn('message ignored because login process is not finished')
+      return
     }
     const cacheManager = await this.manager.getCacheManager()
     const messageId = message.id.id
@@ -236,6 +240,7 @@ export default class MessageEventHandler extends WhatsAppBase {
     log.silly(PRE, `onMessageRevokeMe(${JSON.stringify(message)})`)
     if (!(await this.checkCacheManager())) {
       log.warn('message ignored because login process is not finished')
+
     }
     /*
     if (message.ack === MessageAck.ACK_PENDING) {
