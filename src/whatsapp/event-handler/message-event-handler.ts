@@ -113,7 +113,7 @@ export default class MessageEventHandler extends WhatsAppBase {
    * @returns
    */
   public async onMessageCreate (message: WhatsAppMessage) {
-    log.silly(PRE, `onMessageCreate(${JSON.stringify(message)})`)
+    log.info(PRE, `onMessageCreate(${JSON.stringify(message)})`)
     if (message.id.fromMe) {
       const messageId = message.id.id
       const cacheManager = await this.manager.getCacheManager()
@@ -124,6 +124,14 @@ export default class MessageEventHandler extends WhatsAppBase {
         await sleep(100)
       }
       requestPool.resolveRequest(messageId)
+      const receiverId = message.to
+      if (receiverId && isContactId(receiverId)) {
+        const contactIds = await cacheManager.getContactIdList()
+        const notFriend = !contactIds.find(c => c === receiverId)
+        if (notFriend) {
+          this.emit('friendship', { friendshipId: messageId })
+        }
+      }
       this.emit('message', { messageId })
     }
   }

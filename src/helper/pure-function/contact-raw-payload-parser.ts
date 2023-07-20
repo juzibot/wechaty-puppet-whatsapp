@@ -2,6 +2,7 @@ import * as PUPPET from '@juzi/wechaty-puppet'
 import { SPECIAL_BOT_PUSHNAME } from '../../config.js'
 
 import type { WhatsAppContactPayload } from '../../schema/whatsapp-type.js'
+import { ContactStatus } from '../../schema/contact.js'
 
 export function parserContactRawPayload (contactPayload: WhatsAppContactPayload, userName?: string): PUPPET.payloads.Contact {
   let type
@@ -30,9 +31,10 @@ export function parserContactRawPayload (contactPayload: WhatsAppContactPayload,
 
   const number = contactPayload.number || contactPayload.id.user
 
+  const isFriend = contactPayload.isMyContact && contactPayload.isUser
   return {
     avatar: contactPayload.avatar,
-    friend: contactPayload.isMyContact && contactPayload.isUser,
+    friend: isFriend,
     gender: PUPPET.types.ContactGender.Unknown,
     id: contactPayload.id._serialized,
     name: name || contactPayload.id._serialized,
@@ -40,5 +42,8 @@ export function parserContactRawPayload (contactPayload: WhatsAppContactPayload,
     type: type,
     handle: number,
     weixin: number,
+    additionalInfo: JSON.stringify({
+      status: isFriend ? ContactStatus.FRIEND : ContactStatus.NOT_FRIEND,
+    }),
   }
 }

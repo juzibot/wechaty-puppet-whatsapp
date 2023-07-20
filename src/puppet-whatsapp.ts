@@ -202,10 +202,15 @@ class PuppetWhatsapp extends PUPPET.Puppet {
       // friendship from friendshipAdd
       contactId = getFriendshipFromContactData(payload.friendshipId).contactId
     } else {
-      contactId = await this.messageContact(payload.friendshipId)
+      const message = await this.messageRawPayload(payload.friendshipId)
+      if (message.fromMe) {
+        contactId = message.to
+      } else {
+        contactId = message.from
+      }
     }
     // NOTE: this function automatically put non-contact into cache
-    await this.contactRawPayload(contactId)
+    await this.contactRawPayload(contactId, true)
     this.emit('friendship', payload)
   }
 

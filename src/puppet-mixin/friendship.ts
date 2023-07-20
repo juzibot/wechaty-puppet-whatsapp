@@ -32,8 +32,9 @@ export async function friendshipRawPayload (this: PuppetWhatsApp, id: string): P
 }
 
 export async function friendshipRawPayloadParser (rawPayload: FriendshipRawPayload): Promise<PUPPET.payloads.Friendship> {
+  const contactId = rawPayload.fromMe ? rawPayload.to : rawPayload.from
   return {
-    contactId: rawPayload.from,
+    contactId,
     hello: rawPayload.body,
     id: rawPayload.id.id,
     timestamp: rawPayload.timestamp,
