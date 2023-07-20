@@ -68,3 +68,4 @@ typings/
 t/
 t.*
 .wwebjs_auth/
+.wwebjs_cache/

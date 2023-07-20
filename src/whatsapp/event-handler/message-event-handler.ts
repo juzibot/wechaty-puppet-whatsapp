@@ -27,6 +27,11 @@ export default class MessageEventHandler extends WhatsAppBase {
 
   public async onMessage (message: WhatsAppMessage | WhatsAppMessagePayload) {
     log.info(PRE, `onMessage(${JSON.stringify(message)})`)
+    if (!(await this.checkCacheManager())) {
+      log.warn('message ignored because login process is not finished')
+      return
+    }
+
     // @ts-ignore
     if (
       message.type === 'multi_vcard'
@@ -37,15 +42,8 @@ export default class MessageEventHandler extends WhatsAppBase {
       // skip room join notification and multi_vcard message
       return
     }
+    const cacheManager = await this.manager.getCacheManager()
     const messageId = message.id.id
-    let cacheManager
-    try {
-      cacheManager = await this.manager.getCacheManager()
-    } catch (e) {}
-    if (!cacheManager) {
-      // message comes before login process finished
-      return
-    }
     const messageInCache = await cacheManager.getMessageRawPayload(messageId)
     if (messageInCache) {
       return
@@ -83,7 +81,10 @@ export default class MessageEventHandler extends WhatsAppBase {
    */
   public async onMessageAck (message: WhatsAppMessage) {
     log.silly(PRE, `onMessageAck(${JSON.stringify(message)})`)
-
+    if (!(await this.checkCacheManager())) {
+      log.warn('message ignored because login process is not finished')
+      return
+    }
     /**
      * if message ack equal MessageAck.ACK_DEVICE, we could regard it as has already send success.
      *
@@ -113,7 +114,11 @@ export default class MessageEventHandler extends WhatsAppBase {
    * @returns
    */
   public async onMessageCreate (message: WhatsAppMessage) {
-    log.info(PRE, `onMessageCreate(${JSON.stringify(message)})`)
+    log.silly(PRE, `onMessageCreate(${JSON.stringify(message)})`)
+    if (!(await this.checkCacheManager())) {
+      log.warn('message ignored because login process is not finished')
+      return
+    }
     if (message.id.fromMe) {
       const messageId = message.id.id
       const cacheManager = await this.manager.getCacheManager()
@@ -220,6 +225,10 @@ export default class MessageEventHandler extends WhatsAppBase {
    */
   public async onMessageRevokeEveryone (message: WhatsAppMessage, revokedMsg?: WhatsAppMessage | null | undefined) {
     log.silly(PRE, `onMessageRevokeEveryone(newMsg: ${JSON.stringify(message)}, originalMsg: ${JSON.stringify(revokedMsg)})`)
+    if (!(await this.checkCacheManager())) {
+      log.warn('message ignored because login process is not finished')
+      return
+    }
     const cacheManager = await this.manager.getCacheManager()
     const messageId = message.id.id
     if (revokedMsg) {
@@ -237,6 +246,10 @@ export default class MessageEventHandler extends WhatsAppBase {
    */
   public async onMessageRevokeMe (message: WhatsAppMessage) {
     log.silly(PRE, `onMessageRevokeMe(${JSON.stringify(message)})`)
+    if (!(await this.checkCacheManager())) {
+      log.warn('message ignored because login process is not finished')
+
+    }
     /*
     if (message.ack === MessageAck.ACK_PENDING) {
       // when the bot logout, it will receive onMessageRevokeMe event, but it's ack is MessageAck.ACK_PENDING, so let's ignore this event.
@@ -254,6 +267,18 @@ export default class MessageEventHandler extends WhatsAppBase {
 
   public generateFakeRecallMessageId (messageId: string) {
     return `${messageId}_revoked`
+  }
+
+  private async checkCacheManager () {
+    let cacheManager
+    try {
+      cacheManager = await this.manager.getCacheManager()
+    } catch (e) {}
+    if (!cacheManager) {
+      log.warn(PRE, 'message comes before login process finished')
+      return false
+    }
+    return true
   }
 
 }
