@@ -75,7 +75,7 @@
     "node-schedule": "^2.1.0",
     "rxjs": "^7.5.5",
     "type-fest": "^2.12.2",
-    "typescript": "^5.1.6",
+    "typescript": "5.1.6",
     "uuid": "^9.0.0"
   },
   "files": [
