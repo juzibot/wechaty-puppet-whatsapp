@@ -60,7 +60,8 @@
     "@types/qrcode-terminal": "^0.12.0",
     "@types/uuid": "^9.0.2",
     "qrcode-terminal": "^0.12.0",
-    "tstest": "^1.2.8"
+    "tstest": "^1.2.8",
+    "typescript": "5.1.6"
   },
   "peerDependencies": {
     "@juzi/wechaty-puppet": "^1.0.15"
@@ -75,7 +76,6 @@
     "node-schedule": "^2.1.0",
     "rxjs": "^7.5.5",
     "type-fest": "^2.12.2",
-    "typescript": "5.1.6",
     "uuid": "^9.0.0"
   },
   "files": [
