@@ -47,7 +47,7 @@ export default class WhatsAppBase extends EE<ManagerEvents> {
 
   public clearPendingLogoutEmitTimer () {
     if (this.pendingLogoutEmitTimer) {
-      clearTimeout(this.pendingLogoutEmitTimer)
+      clearTimeout(this.pendingLogoutEmitTimer as any)
       this.pendingLogoutEmitTimer = undefined
     }
   }

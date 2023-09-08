@@ -59,7 +59,7 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
     if (!this.qrcodeOrLoginCheckTimer) {
       return
     }
-    clearInterval(this.qrcodeOrLoginCheckTimer)
+    clearInterval(this.qrcodeOrLoginCheckTimer as any)
   }
 
   public async onAuthenticated () {
