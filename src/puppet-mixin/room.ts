@@ -120,15 +120,11 @@ async function addMemberListToRoom (
   const result = await roomChat.addParticipants(contactIdList)
   const cacheManager = await this.manager.getCacheManager()
   const successContactIdList = []
-  if (!result.status || Number(result.status) !== 207) {
-    switch (Number(result.status)) {
-      case 401:
-        throw WAError(WA_ERROR_TYPE.ERR_ADD_ROOM, `cannot add contact: ${contactIdList.join(', ')} to room ${roomId}, please check if you are room admin`)
-      default:
-        throw WAError(WA_ERROR_TYPE.ERR_ADD_ROOM, `cannot add contact: ${contactIdList.join(', ')} to room ${roomId} for unknown reason`)
-    }
+  if (typeof result === 'string') {
+    throw WAError(WA_ERROR_TYPE.ERR_ADD_ROOM, `cannot add contact: ${contactIdList.join(', ')} to room ${roomId}, ${result}`)
   }
-  for (const item of result.participants) {
+  for (const key in result) {
+    const item = result[key]
     for (const contactId in item) {
       const contactResult = item[contactId]
       if (Number(contactResult?.code) === 200) {

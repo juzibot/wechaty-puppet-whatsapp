@@ -40,7 +40,7 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
     // NOTE: This event will not be fired if a session is specified.
     this.lastQRCodeTime = Date.now()
     this.hasLogin = false
-    this.emit('scan', { qrcode, status: PUPPET.types.ScanStatus.Waiting })
+    this.emit('scan', { qrcode, status: PUPPET.types.ScanStatus.Waiting, timestamp: Date.now() })
     this.checkQRCodeOrLoginEvent()
   }
 

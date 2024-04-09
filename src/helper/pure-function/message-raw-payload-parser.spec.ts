@@ -31,6 +31,10 @@ test('message parser for room message which send from bot by web ', async t => {
     isGif: false,
     isEphemeral: false,
     links: [],
+    groupMentions: [],
+    pollName: '',
+    pollOptions: [],
+    allowMultipleAnswers: false,
   }
   const messagePayload = parserMessageRawPayload(roomMessageFromBotByWeb)
   t.ok(messagePayload.listenerId === undefined, 'should get no target id')
@@ -73,6 +77,10 @@ test('message parser for room message which send from bot by api ', async t => {
     isGif: false,
     isEphemeral: false,
     links: [],
+    groupMentions: [],
+    pollName: '',
+    pollOptions: [],
+    allowMultipleAnswers: false,
   }
   const messagePayload = parserMessageRawPayload(roomMessageFromBotByApi)
 
@@ -114,6 +122,10 @@ test('message parser for room message which send from other contact ', async t =
     isGif: false,
     isEphemeral: false,
     links: [],
+    groupMentions: [],
+    pollName: '',
+    pollOptions: [],
+    allowMultipleAnswers: false,
   }
   const messagePayload = parserMessageRawPayload(roomMessageFromOtherContact)
 
@@ -153,6 +165,10 @@ test('message parser for contact message which send from bot by web ', async t =
     isGif: false,
     isEphemeral: false,
     links: [],
+    groupMentions: [],
+    pollName: '',
+    pollOptions: [],
+    allowMultipleAnswers: false,
   }
   const messagePayload = parserMessageRawPayload(contactMessageFromBotByWeb)
 
@@ -192,6 +208,10 @@ test('message parser for contact message which send from bot by api ', async t =
     isGif: false,
     isEphemeral: false,
     links: [],
+    groupMentions: [],
+    pollName: '',
+    pollOptions: [],
+    allowMultipleAnswers: false,
   }
   const messagePayload = parserMessageRawPayload(contactMessageFromBotByApi)
 
@@ -231,6 +251,10 @@ test('message parser for contact message which send from other contact', async t
     isGif: false,
     isEphemeral: false,
     links: [],
+    groupMentions: [],
+    pollName: '',
+    pollOptions: [],
+    allowMultipleAnswers: false,
   }
   const messagePayload = parserMessageRawPayload(contactMessageFromOtherContact)
 
@@ -311,6 +335,10 @@ test('message parser for quoted message', async t => {
     isGif: false,
     isEphemeral: false,
     links: [],
+    groupMentions: [],
+    pollName: '',
+    pollOptions: [],
+    allowMultipleAnswers: false,
   }
   const messagePayload = parserMessageRawPayload(quotedMessage)
 

@@ -272,10 +272,7 @@ export async function messageSendText (this: PuppetWhatsApp, conversationId: str
   }
   const waMessageSendOptions: MessageSendOptions = {}
   if (mentions.length > 0) {
-    const contacts = await Promise.all(mentions.map((v) => (
-      this.manager.getContactById(v)
-    )))
-    waMessageSendOptions.mentions = contacts
+    waMessageSendOptions.mentions = mentions
   }
 
   if (quoteId) {
@@ -369,10 +366,10 @@ export async function messageLocation (this: PuppetWhatsApp, messageId: string):
 
   return {
     accuracy: 15,
-    address: msg.location?.description?.split('\n')[1] || '',
+    address: msg.location?.options?.address?.split('\n')[1] || '',
     latitude: Number(msg.location?.latitude || 0),
     longitude: Number(msg.location?.longitude || 0),
-    name: msg.location?.description?.split('\n')[0] || '',
+    name: msg.location?.options?.name?.split('\n')[0] || '',
   }
 }
 

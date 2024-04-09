@@ -1,5 +1,4 @@
-import type { Location } from '@juzi/whatsapp-web.js'
-import type WhatsApp from '@juzi/whatsapp-web.js'
+import type * as WhatsApp from '@juzi/whatsapp-web.js'
 import type { SetOptional } from 'type-fest'
 
 export type {
@@ -36,7 +35,6 @@ export type {
   PrivateChat,
   GroupParticipant,
   ChangeParticipantsPermissions,
-  ChangeGroupParticipants,
   // GroupChat,
   ProductMetadata,
   Product,
@@ -61,7 +59,7 @@ export interface MessageId {
 export type WhatsAppContactPayload = {
   avatar: string
 } & Omit<WhatsApp.Contact, 'getProfilePicUrl' | 'getChat' | 'getCountryCode' | 'getFormattedNumber' | 'block' | 'unblock' | 'getAbout'>
-export type WhatsAppMessagePayload = SetOptional<{mentionedIds: string[], location?:Location, orderId?: string, id: MessageId, _data?: any} & Omit<WhatsApp.Message, 'id' | 'orderId' | 'location' | 'mentionedIds' | 'acceptGroupV4Invite' | 'delete' | 'downloadMedia' | 'getChat' | 'getContact' | 'getMentions' | 'getQuotedMessage' | 'reply' | 'forward' | 'star' | 'unstar' | 'getInfo' | 'getOrder' | 'getPayment' | 'duration' | 'rawData' | 'reload' | 'react' | 'hasReaction' | 'getReactions' | 'edit'>, 'urlLink' | 'productMessage'>
+export type WhatsAppMessagePayload = SetOptional<{mentionedIds: WhatsApp.ChatId[], location?: WhatsApp.Location, orderId?: string, id: MessageId, _data?: any} & Omit<WhatsApp.Message, 'id' | 'orderId' | 'location' | 'mentionedIds' | 'acceptGroupV4Invite' | 'delete' | 'downloadMedia' | 'getChat' | 'getContact' | 'getMentions' | 'getQuotedMessage' | 'reply' | 'forward' | 'star' | 'unstar' | 'getInfo' | 'getOrder' | 'getPayment' | 'duration' | 'rawData' | 'reload' | 'react' | 'hasReaction' | 'getReactions' | 'edit' |'getGroupMentions' | 'pin' | 'unpin'>, 'urlLink' | 'productMessage'>
 export interface GroupMetadata {
   desc: string
   owner: WhatsApp.ContactId

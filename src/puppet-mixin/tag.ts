@@ -39,13 +39,13 @@ export async function tagGroupTagList (this: PuppetWhatsApp, groupId ?: string):
   return PUPPET.throwUnsupportedError()
 }
 
-export async function tagTagAdd (this: PuppetWhatsApp, tagName: string, groupId ?: string): Promise <string | void> {
-  log.verbose(PRE, 'tagTagAdd(%s, %s)', tagName, groupId)
+export async function tagTagAdd (this: PuppetWhatsApp, tagNameList: string[], groupId?: string): Promise <void> {
+  log.verbose(PRE, 'tagTagAdd(%s, %s)', JSON.stringify(tagNameList), groupId)
   return PUPPET.throwUnsupportedError()
 }
 
-export async function tagTagDelete (this: PuppetWhatsApp, tag: string): Promise <void> {
-  log.verbose(PRE, 'tagTagDelete(%s)', JSON.stringify(tag))
+export async function tagTagDelete (this: PuppetWhatsApp, tagIdList: string[]): Promise <void> {
+  log.verbose(PRE, 'tagTagDelete(%s)', JSON.stringify(tagIdList))
   return PUPPET.throwUnsupportedError()
 }
 
