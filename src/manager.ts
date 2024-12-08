@@ -27,6 +27,8 @@ export default class Manager extends EE<ManagerEvents> {
   private fetchingMessages: boolean = false
   private heartbeatTimer?: NodeJS.Timer
 
+  private selfId: string = ''
+
   constructor (private options: PuppetWhatsAppOptions) {
     super()
     this.whatsAppManager = new WhatsAppManager(this)
@@ -34,7 +36,10 @@ export default class Manager extends EE<ManagerEvents> {
 
     this.whatsAppManager.on({
       friendship: data => this.emit('friendship', data),
-      login: data => this.emit('login', data),
+      login: data => {
+        this.emit('login', data)
+        this.selfId = data
+      },
       logout: (botId, data) => this.emit('logout', botId, data),
       message: data => this.emit('message', data),
       ready: () => this.emit('ready'),
@@ -165,8 +170,16 @@ export default class Manager extends EE<ManagerEvents> {
 
   public async getRoomChatById (roomId: string) {
     if (isRoomId(roomId)) {
-      const roomChat = await this.requestManager.getChatById(roomId)
-      return roomChat as GroupChat
+      const roomChat = (await this.requestManager.getChatById(roomId)) as GroupChat
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (!roomChat.participants) {
+        roomChat.participants = [{
+          id: (await this.requestManager.getContactById(this.selfId)).id,
+          isAdmin: true,
+          isSuperAdmin: true,
+        }]
+      }
+      return roomChat
     } else {
       throw WAError(WA_ERROR_TYPE.ERR_GROUP_OR_CONTACT_ID, `The roomId: ${roomId} is not right.`)
     }
