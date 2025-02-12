@@ -31,7 +31,7 @@ export function parserContactRawPayload (contactPayload: WhatsAppContactPayload,
 
   const number = contactPayload.number || contactPayload.id.user
 
-  const isFriend = contactPayload.isMyContact
+  const isFriend = contactPayload.isMyContact || contactPayload.isMe
   return {
     avatar: contactPayload.avatar,
     friend: isFriend,
