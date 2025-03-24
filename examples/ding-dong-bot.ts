@@ -1,3 +1,4 @@
+/* eslint-disable promise/always-return */
 /* eslint-disable sort-keys */
 /* eslint-disable no-console */
 /**
@@ -48,7 +49,6 @@ puppet
   .on('scan',   onScan)
   .on('error',  onError)
   .on('message', onMessage)
-  .on('dirty', onDirty)
   .on('ready', onReady)
 
 /**
@@ -57,6 +57,9 @@ puppet
  *
  */
 puppet.start()
+  .then(() => {
+    puppet.on('dirty', onDirty)
+  })
   .catch(async e => {
     console.error('Bot start() fail:', e)
     await puppet.stop()
@@ -137,6 +140,11 @@ async function onDirty (payload: PUPPET.payloads.EventDirty) {
     const contactId = payload.payloadId
     const contact = await puppet.contactPayload(contactId)
     console.log('updated contact: ', JSON.stringify(contact))
+  }
+  if (payload.payloadType === PUPPET.types.Dirty.Message) {
+    const messageId = payload.payloadId
+    const message = await puppet.messagePayload(messageId)
+    console.log('updated message: ', JSON.stringify(message))
   }
 }
 

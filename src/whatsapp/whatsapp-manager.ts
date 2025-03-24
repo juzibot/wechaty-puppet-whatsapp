@@ -47,6 +47,7 @@ export default class WhatsAppManager extends WhatsAppBase {
       friendship: data => this.emit('friendship', data),
       message: data => this.emit('message', data),
       'room-invite': data => this.emit('room-invite', data),
+      dirty: data => this.emit('dirty', data),
     })
 
     this.groupEventHandler.on({

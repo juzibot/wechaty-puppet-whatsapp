@@ -4,6 +4,7 @@ import WAError from '../../exception/whatsapp-error.js'
 import { isRoomId } from '../miscellaneous.js'
 
 import {
+  MessageAck,
   MessageTypes as WhatsAppMessageType,
 } from '../../schema/whatsapp-interface.js'
 
@@ -33,6 +34,8 @@ export function parserMessageRawPayload (messagePayload: WhatsAppMessagePayload)
     throw WAError(WA_ERROR_TYPE.ERR_MSG_NOT_FOUND, 'empty roomId and empty listenerId!')
   }
 
+  const readList = roomId ? undefined : [MessageAck.ACK_READ, MessageAck.ACK_PLAYED].includes(messagePayload.ack) ? [listenerId] : []
+
   return {
     /**
      * @deprecated `fromId` is deprecated, use `talkerId` instead.
@@ -57,6 +60,8 @@ export function parserMessageRawPayload (messagePayload: WhatsAppMessagePayload)
     quoteId: messagePayload.hasQuotedMsg ? messagePayload._data?.quotedStanzaID : undefined,
 
     type: getMessageType(messagePayload),
+
+    readList,
   } as PUPPET.payloads.Message
 
 }

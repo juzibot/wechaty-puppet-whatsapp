@@ -52,7 +52,7 @@
     "@chatie/eslint-config": "1.0.4",
     "@chatie/semver": "^0.4.7",
     "@chatie/tsconfig": "4.6.3",
-    "@juzi/wechaty-puppet": "^1.0.58",
+    "@juzi/wechaty-puppet": "^1.0.102",
     "@swc/core": "^1.4.12",
     "@types/cuid": "^2.0.1",
     "@types/fs-extra": "^9.0.13",

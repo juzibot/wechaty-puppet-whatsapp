@@ -1,4 +1,4 @@
-import type * as PUPPET from '@juzi/wechaty-puppet'
+import * as PUPPET from '@juzi/wechaty-puppet'
 import {
   MessageMediaTypeList,
   log,
@@ -157,6 +157,14 @@ export default class MessageEventHandler extends WhatsAppBase {
       const requestPool = RequestPool.Instance
       requestPool.resolveRequest(messageId)
       this.emit('message', { messageId })
+    }
+
+    if (messageInCache && message.id.fromMe && message.ack > messageInCache.ack && [MessageAck.ACK_READ, MessageAck.ACK_PLAYED].includes(message.ack)) {
+      await cacheManager.setMessageRawPayload(messageId, message)
+      this.emit('dirty', {
+        payloadId: messageId,
+        payloadType: PUPPET.types.Dirty.Message,
+      })
     }
   }
 
