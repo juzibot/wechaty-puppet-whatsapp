@@ -1,6 +1,6 @@
 /* eslint-disable no-redeclare */
 import * as PUPPET from '@juzi/wechaty-puppet'
-import { FileBox, log } from '../config.js'
+import { FileBox, type FileBoxInterface, log } from '../config.js'
 import { WA_ERROR_TYPE } from '../exception/error-type.js'
 import WAError from '../exception/whatsapp-error.js'
 import { contactRawPayload } from './contact.js'
@@ -12,6 +12,7 @@ import type {
 } from '../schema/whatsapp-type.js'
 import { isRoomId } from '../helper/miscellaneous.js'
 import { parserRoomRawPayload } from '../helper/pure-function/room-raw-payload-parser.js'
+import { getMessageMediaFromFilebox } from '../helper/pure-function/messageMedia.js'
 
 const PRE = 'MIXIN_ROOM'
 
@@ -166,15 +167,25 @@ export async function roomQuit (this: PuppetWhatsApp, roomId: string): Promise<v
   await cacheManager.deleteRoomMemberIdList(roomId)
 }
 
-export async function roomAvatar (this: PuppetWhatsApp, roomId: string): Promise<FileBox> {
+export async function roomAvatar (this: PuppetWhatsApp, roomId: string, avatar?: FileBoxInterface): Promise<FileBox | void> {
   log.verbose(PRE, 'roomAvatar(%s)', roomId)
 
-  const payload = await this.roomPayload(roomId)
+  if (avatar) {
+    const media = await getMessageMediaFromFilebox(avatar)
+    const roomChat = await this.manager.getRoomChatById(roomId)
+    const result = await roomChat.setPicture(media)
+    if (!result) {
+      throw WAError(WA_ERROR_TYPE.ERR_ROOM_AVATAR_SET_FAILED, `can not set room avatar, room id: ${roomId}`)
+    }
+  } else {
+    const payload = await this.roomPayload(roomId)
 
-  if (payload.avatar) {
-    return FileBox.fromUrl(payload.avatar)
+    if (payload.avatar) {
+      return FileBox.fromUrl(payload.avatar)
+    }
+    throw WAError(WA_ERROR_TYPE.ERR_ROOM_AVATAR_NOT_FOUND, `can not find this room avatar, room id: ${roomId}`)
   }
-  throw WAError(WA_ERROR_TYPE.ERR_ROOM_AVATAR_NOT_FOUND, `can not find this room avatar, room id: ${roomId}`)
+
 }
 
 export async function roomTopic(this: PuppetWhatsApp, roomId: string): Promise<string>

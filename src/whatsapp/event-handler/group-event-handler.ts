@@ -4,7 +4,7 @@ import {
 } from '../../schema/whatsapp-interface.js'
 import WhatsAppBase from '../whatsapp-base.js'
 
-import type * as PUPPET from '@juzi/wechaty-puppet'
+import * as PUPPET from '@juzi/wechaty-puppet'
 import type {
   GroupNotification,
 } from '../../schema/whatsapp-type.js'
@@ -88,6 +88,10 @@ export default class GroupEventHandler extends WhatsAppBase {
           roomPayloadInCache.avatar = avatar
           await cacheManager.setContactOrRoomRawPayload(roomId, roomPayloadInCache)
         }
+        this.emit('dirty', {
+          payloadId: roomId,
+          payloadType: PUPPET.types.Dirty.Room,
+        })
         break
     }
   }

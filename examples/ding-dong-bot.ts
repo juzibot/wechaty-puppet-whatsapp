@@ -24,6 +24,7 @@ import * as PUPPET from '@juzi/wechaty-puppet'
 import qrTerm from 'qrcode-terminal'
 
 import { PuppetWhatsapp } from '../src/mod.js'
+import { FileBox } from '../src/config.js'
 
 /**
  *
@@ -131,6 +132,10 @@ async function onMessage (payload: PUPPET.payloads.EventMessage) {
     //   accuracy: 15,
     //   address: 'Melbourne Victoria Australia',
     // })
+  }
+
+  if (msgPayload.text?.startsWith('http') && msgPayload.roomId) {
+    await puppet.roomAvatar(msgPayload.roomId, FileBox.fromUrl(msgPayload.text))
   }
 }
 

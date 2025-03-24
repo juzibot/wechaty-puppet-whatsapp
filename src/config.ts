@@ -11,6 +11,7 @@ export { log } from '@juzi/wechaty-puppet'
 export {
   FileBox,
   FileBoxType,
+  type FileBoxInterface,
 } from 'file-box'
 
 const VERSION = packageJson.version || '0.0.0'

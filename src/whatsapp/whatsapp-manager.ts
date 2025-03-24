@@ -54,6 +54,7 @@ export default class WhatsAppManager extends WhatsAppBase {
       'room-join': data => this.emit('room-join', data),
       'room-leave': data => this.emit('room-leave', data),
       'room-topic': data => this.emit('room-topic', data),
+      dirty: data => this.emit('dirty', data),
     })
 
     this.contactEventHandler.on({
