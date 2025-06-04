@@ -366,10 +366,10 @@ export async function messageLocation (this: PuppetWhatsApp, messageId: string):
 
   return {
     accuracy: 15,
-    address: msg.location?.options?.address?.split('\n')[1] || '',
+    address: msg.location?.address?.split('\n')[1] || '',
     latitude: Number(msg.location?.latitude || 0),
     longitude: Number(msg.location?.longitude || 0),
-    name: msg.location?.options?.name?.split('\n')[0] || '',
+    name: msg.location?.name?.split('\n')[0] || '',
   }
 }
 
