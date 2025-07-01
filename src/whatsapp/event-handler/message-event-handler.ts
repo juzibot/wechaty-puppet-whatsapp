@@ -154,6 +154,13 @@ export default class MessageEventHandler extends WhatsAppBase {
      *   emit message when no cache or ack of message in cache equal 1
      */
     if (!messageInCache || (MessageMediaTypeList.includes(message.type) && messageInCache.ack === MessageAck.ACK_SERVER)) {
+      if (!message.author) {
+        // based on experience, not officially conformed
+        // self message from other device contains author
+        // while sent from this puppet it's undefined
+        log.info(PRE, `seems to be self sent message, so skip. id: ${messageId}, base content: ${message.body}`)
+        return
+      }
       const requestPool = RequestPool.Instance
       const hasRequest = requestPool.resolveRequest(messageId)
       if (!hasRequest) {
