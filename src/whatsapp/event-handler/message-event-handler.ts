@@ -155,8 +155,10 @@ export default class MessageEventHandler extends WhatsAppBase {
      */
     if (!messageInCache || (MessageMediaTypeList.includes(message.type) && messageInCache.ack === MessageAck.ACK_SERVER)) {
       const requestPool = RequestPool.Instance
-      requestPool.resolveRequest(messageId)
-      this.emit('message', { messageId })
+      const hasRequest = requestPool.resolveRequest(messageId)
+      if (!hasRequest) {
+        this.emit('message', { messageId })
+      }
     }
 
     if (messageInCache && message.id.fromMe && message.ack > messageInCache.ack && [MessageAck.ACK_READ, MessageAck.ACK_PLAYED].includes(message.ack)) {

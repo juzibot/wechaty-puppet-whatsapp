@@ -36,10 +36,11 @@ export class RequestPool {
   public resolveRequest (id: string) {
     const callbacks = this.poolMap[id]
     if (!callbacks || callbacks.length === 0) {
-      return
+      return false
     }
     callbacks.forEach(cb => cb())
     delete this.poolMap[id]
+    return true
   }
 
   public clearPool () {
