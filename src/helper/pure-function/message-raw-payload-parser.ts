@@ -76,9 +76,7 @@ function getMessageType (messagePayload: WhatsAppMessagePayload): PUPPET.types.M
 
   switch (messagePayload.type) {
     case WhatsAppMessageType.TEXT:
-      if (messagePayload.urlLink) {
-        type = PUPPET.types.Message.Url
-      } else if (messagePayload.isStatus) {
+      if (messagePayload.isStatus) {
         type = PUPPET.types.Message.Post
       } else {
         type = PUPPET.types.Message.Text
