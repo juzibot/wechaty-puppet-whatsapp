@@ -253,9 +253,13 @@ export async function messageChannel (this: PuppetWhatsApp, messageId: string): 
 
 export async function messageSend (this: PuppetWhatsApp, conversationId: string, content: MessageContent, options?: MessageSendOptions, timeout = DEFAULT_TIMEOUT.MESSAGE_SEND): Promise<string> {
   log.info(PRE, 'messageSend(%s, %s)', conversationId, JSON.stringify(options))
+  void timeout
+  void RequestPool
 
   const msg = await this.manager.sendMessage(conversationId, content, options)
   if (msg.ack >= 0) {
+    const cacheManager = await this.manager.getCacheManager()
+    await cacheManager.setMessageRawPayload(msg.id.id, msg)
     return msg.id.id
   } else {
     log.error(PRE, 'messageSend failed, id: %s, ack: %s, detail: %s', msg.id.id, msg.ack, JSON.stringify(msg))

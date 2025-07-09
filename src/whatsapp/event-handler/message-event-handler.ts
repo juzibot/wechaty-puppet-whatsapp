@@ -123,6 +123,7 @@ export default class MessageEventHandler extends WhatsAppBase {
       const messageId = message.id.id
       const cacheManager = await this.manager.getCacheManager()
       await cacheManager.setMessageRawPayload(messageId, message)
+      void sleep
       // const requestPool = RequestPool.Instance
       // const now = Date.now()
       // while (!requestPool.hasRequest(messageId) && Date.now() - now < 400) {
