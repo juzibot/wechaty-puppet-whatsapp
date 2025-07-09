@@ -8,6 +8,7 @@ import type {
   MessageSendOptions,
 } from '../schema/whatsapp-type.js'
 import {
+  Location,
   MessageMedia,
   MessageTypes,
   ProductMessage,
@@ -251,13 +252,19 @@ export async function messageChannel (this: PuppetWhatsApp, messageId: string): 
 }
 
 export async function messageSend (this: PuppetWhatsApp, conversationId: string, content: MessageContent, options?: MessageSendOptions, timeout = DEFAULT_TIMEOUT.MESSAGE_SEND): Promise<string> {
-  log.verbose(PRE, 'messageSend(%s, %s)', conversationId, JSON.stringify(options))
+  log.info(PRE, 'messageSend(%s, %s)', conversationId, JSON.stringify(options))
 
   const msg = await this.manager.sendMessage(conversationId, content, options)
-  const messageId = msg.id.id
-  const requestPool = RequestPool.Instance
-  await requestPool.pushRequest(messageId, timeout)
-  return messageId
+  if (msg.ack >= 0) {
+    return msg.id.id
+  } else {
+    log.error(PRE, 'messageSend failed, id: %s, ack: %s, detail: %s', msg.id.id, msg.ack, JSON.stringify(msg))
+    throw WAError(WA_ERROR_TYPE.ERR_SEND_MSG, `Message send failed, id: ${msg.id.id}, ack: ${msg.ack}, detail: ${JSON.stringify(msg)}`)
+  }
+  // const messageId = msg.id.id
+  // const requestPool = RequestPool.Instance
+  // await requestPool.pushRequest(messageId, timeout)
+  // return messageId
 }
 
 export async function messageSendText (this: PuppetWhatsApp, conversationId: string, text: string, options: PUPPET.types.MessageSendTextOptions = {}): Promise<void | string> {
@@ -348,10 +355,13 @@ export async function messageSendChannel (this: PuppetWhatsApp, conversationId: 
 
 export async function messageSendLocation (this: PuppetWhatsApp, conversationId: string, locationPayload: PUPPET.payloads.Location): Promise<string> {
   log.verbose(PRE, 'messageSendLocation(%s, %s)', conversationId, JSON.stringify(locationPayload))
-  throw PUPPET.throwUnsupportedError()
+  // throw PUPPET.throwUnsupportedError()
 
-  // const location = new Location(locationPayload.latitude, locationPayload.longitude, `${locationPayload.name}\n${locationPayload.address}`)
-  // return messageSend.call(this, conversationId, location)
+  const location = new Location(locationPayload.latitude, locationPayload.longitude, {
+    name: locationPayload.name,
+    address: locationPayload.address,
+  })
+  return messageSend.call(this, conversationId, location)
 
   // can send via whatsapp-web.js, however whatsapp-web itself does not offer location sending, so that the message cannot reach the server
 }
