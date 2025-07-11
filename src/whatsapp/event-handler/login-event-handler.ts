@@ -167,6 +167,10 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
     this.manager.stopSchedule()
     this.emit('logout', this.getBotId(), reason as string)
     this.baseStop()
+
+    if (!this.getWhatsAppClient().pupBrowser?.isConnected) {
+      await this.getWhatsAppClient().initialize()
+    }
   }
 
   public async onChangeState (state: WAStateType) {
