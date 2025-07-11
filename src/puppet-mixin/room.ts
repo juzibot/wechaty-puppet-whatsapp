@@ -149,13 +149,14 @@ async function addMemberListToRoom (
 export async function roomDel (
   this: PuppetWhatsApp,
   roomId: string,
-  contactId: string,
+  contactIds: string | string[],
 ): Promise<void> {
-  log.verbose(PRE, 'roomDel(%s, %s)', roomId, contactId)
+  log.verbose(PRE, 'roomDel(%s, %s)', roomId, contactIds)
   const roomChat = await this.manager.getRoomChatById(roomId)
-  await roomChat.removeParticipants([contactId])
+  const contactIdList = Array.isArray(contactIds) ? contactIds : [contactIds]
+  await roomChat.removeParticipants(contactIdList)
   const cacheManager = await this.manager.getCacheManager()
-  await cacheManager.removeRoomMemberFromList(roomId, contactId)
+  await cacheManager.removeRoomMemberFromList(roomId, contactIdList)
 }
 
 export async function roomQuit (this: PuppetWhatsApp, roomId: string): Promise<void> {
