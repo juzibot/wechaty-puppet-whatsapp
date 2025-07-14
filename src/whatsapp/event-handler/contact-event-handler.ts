@@ -13,6 +13,7 @@ export default class ContactEventHandler extends WhatsAppBase {
   public async onContactNameChange (contact: Contact, newName: string, oldName: string) {
     log.info(PRE, `onContactNameChange(${contact.id._serialized}, ${newName}, ${oldName})`)
     const type = contact.isGroup ? PUPPET.types.Dirty.Room : PUPPET.types.Dirty.Contact
+    await (await this.manager.getCacheManager()).deleteContactOrRoom(contact.id._serialized)
     this.emit('dirty', {
       payloadType: type,
       payloadId: contact.id._serialized,
