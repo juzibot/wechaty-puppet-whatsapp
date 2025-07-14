@@ -30,6 +30,10 @@ export default class GroupEventHandler extends WhatsAppBase {
     }
     await this.manager.syncRoomMemberList(roomId)
     this.emit('room-join', roomJoinPayload)
+    this.emit('dirty', {
+      payloadId: roomId,
+      payloadType: PUPPET.types.Dirty.Room,
+    })
   }
 
   public async onRoomLeave (notification: GroupNotification) {
@@ -46,6 +50,10 @@ export default class GroupEventHandler extends WhatsAppBase {
     const cacheManager = await this.manager.getCacheManager()
     await cacheManager.removeRoomMemberFromList(roomId, notification.recipientIds)
     this.emit('room-leave', roomLeavePayload)
+    this.emit('dirty', {
+      payloadId: roomId,
+      payloadType: PUPPET.types.Dirty.Room,
+    })
   }
 
   public async onRoomUpdate (notification: GroupNotification) {
