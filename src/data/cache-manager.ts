@@ -260,7 +260,6 @@ export class CacheManager {
     return this.cacheLatestMessageTimestampForChat
   }
 
-
   /**
    * -------------------------------
    * Friendship Cache Section
