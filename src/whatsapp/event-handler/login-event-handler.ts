@@ -168,7 +168,7 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
     this.emit('logout', this.getBotId(), reason as string)
     this.baseStop()
 
-    if (!this.getWhatsAppClient().pupBrowser?.isConnected) {
+    if (!this.getWhatsAppClient().pupPage) {
       await this.getWhatsAppClient().initialize()
     }
   }
