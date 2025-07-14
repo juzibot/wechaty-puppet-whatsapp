@@ -12,6 +12,7 @@ import type {
   InviteV4Data,
   WhatsAppMessagePayload,
 } from '../schema/whatsapp-type.js'
+import { Friendship } from '@juzi/wechaty-puppet/payloads'
 
 const PRE = 'CacheManager'
 
@@ -58,6 +59,7 @@ export class CacheManager {
   private cacheRoomMemberIdList?: FlashStore<string, string[]>
   private cacheRoomInvitationRawPayload?: FlashStore<string, Partial<InviteV4Data>>
   private cacheLatestMessageTimestampForChat?: FlashStore<string, number>
+  private cacheFriendshipRawPayload?: FlashStore<string, Friendship>
 
   /**
    * -------------------------------
@@ -258,6 +260,36 @@ export class CacheManager {
     return this.cacheLatestMessageTimestampForChat
   }
 
+
+  /**
+   * -------------------------------
+   * Friendship Cache Section
+   * --------------------------------
+   */
+  public async getFriendshipRawPayload (id: string) {
+    const cache = this.getFriendshipCache()
+    return cache.get(id)
+  }
+
+  public async setFriendshipRawPayload (id: string, payload: Friendship): Promise<void> {
+    const cache = this.getFriendshipCache()
+    // @ts-ignore client is in implementation but not in interface
+    const { client, ...rest } = payload
+    await cache.set(id, rest)
+  }
+
+  public deleteFriendship (id: string) {
+    const cache = this.getFriendshipCache()
+    return cache.delete(id)
+  }
+
+  private getFriendshipCache () {
+    if (!this.cacheFriendshipRawPayload) {
+      throw WAError(WA_ERROR_TYPE.ERR_NO_CACHE, 'getFriendshipCache() has no cache')
+    }
+    return this.cacheFriendshipRawPayload
+  }
+
   /**
    * -------------------------------
    * Private Method Section
@@ -291,6 +323,7 @@ export class CacheManager {
     this.cacheRoomInvitationRawPayload = new FlashStore(path.join(baseDir, 'room-invitation'))
     this.cacheRoomMemberIdList = new FlashStore(path.join(baseDir, 'room-member'))
     this.cacheLatestMessageTimestampForChat = new FlashStore(path.join(baseDir, 'latest-message-timestamp-for-chat'))
+    this.cacheFriendshipRawPayload = new FlashStore(path.join(baseDir, 'friendship'))
 
     const messageTotal = await this.cacheMessageRawPayload.size
 
@@ -305,6 +338,7 @@ export class CacheManager {
         && this.cacheRoomInvitationRawPayload
         && this.cacheRoomMemberIdList
         && this.cacheLatestMessageTimestampForChat
+        && this.cacheFriendshipRawPayload
     ) {
       log.silly(PRE, 'releaseCache() closing caches ...')
 
@@ -314,6 +348,7 @@ export class CacheManager {
         this.cacheRoomInvitationRawPayload.close(),
         this.cacheRoomMemberIdList.close(),
         this.cacheLatestMessageTimestampForChat.close(),
+        this.cacheFriendshipRawPayload.close(),
       ])
 
       this.cacheMessageRawPayload = undefined
@@ -321,6 +356,7 @@ export class CacheManager {
       this.cacheRoomInvitationRawPayload = undefined
       this.cacheRoomMemberIdList = undefined
       this.cacheLatestMessageTimestampForChat = undefined
+      this.cacheFriendshipRawPayload = undefined
 
       log.silly(PRE, 'releaseCache() cache closed.')
     } else {

@@ -34,7 +34,7 @@ import { RequestPool } from './request/request-pool.js'
 import { contactSelfQRCode, contactSelfName, contactSelfSignature } from './puppet-mixin/contact-self.js'
 import { contactAlias, contactPhone, contactCorporationRemark, contactDescription, contactList, contactAvatar, contactRawPayloadParser, contactRawPayload } from './puppet-mixin/contact.js'
 import { conversationReadMark } from './puppet-mixin/conversation.js'
-import { friendshipRawPayload, friendshipRawPayloadParser, friendshipSearchPhone, friendshipSearchWeixin, friendshipAdd, friendshipAccept, friendshipSearchHandle, getFriendshipFromContactData } from './puppet-mixin/friendship.js'
+import { friendshipRawPayload, friendshipRawPayloadParser, friendshipSearchPhone, friendshipSearchWeixin, friendshipAdd, friendshipAccept, friendshipSearchHandle } from './puppet-mixin/friendship.js'
 import { messageContact, messageImage, messageRecall, messageFile, messageUrl, messageMiniProgram, messageSendText, messageSendFile, messageSendContact, messageSendUrl, messageSendMiniProgram, messageForward, messageRawPayloadParser, messageRawPayload, messagePost, messageSendChannel, messageChannel, messageSendLocation, messageLocation } from './puppet-mixin/message.js'
 import { roomRawPayloadParser, roomRawPayload, roomList, roomDel, roomAvatar, roomAdd, roomTopic, roomCreate, roomQuit, roomQRCode, roomMemberList, roomMemberRawPayload, roomMemberRawPayloadParser, roomAnnounce, roomInvitationAccept, roomInvitationRawPayload, roomInvitationRawPayloadParser } from './puppet-mixin/room.js'
 import { tagContactTagAdd, tagContactTagList, tagContactTagRemove, tagGroupAdd, tagGroupDelete, tagGroupList, tagGroupTagList, tagTagAdd, tagTagContactList, tagTagDelete, tagTagList } from './puppet-mixin/tag.js'
@@ -197,20 +197,12 @@ class PuppetWhatsapp extends PUPPET.Puppet {
   }
 
   private async onFriendship (payload: PUPPET.payloads.EventFriendship): Promise<void> {
-    let contactId: string
-    if (payload.friendshipId.startsWith('friendshipFromContact-')) {
-      // friendship from friendshipAdd
-      contactId = getFriendshipFromContactData(payload.friendshipId).contactId
-    } else {
-      const message = await this.messageRawPayload(payload.friendshipId)
-      if (message.fromMe) {
-        contactId = message.to
-      } else {
-        contactId = message.from
-      }
+    const friendshipPayload = await this.friendshipRawPayload(payload.friendshipId)
+    if (friendshipPayload.type === PUPPET.types.Friendship.Receive) {
+      // 收到好友请求暂不冒泡，直接接受
+      await this.friendshipAccept(payload.friendshipId)
+      return
     }
-    // NOTE: this function automatically put non-contact into cache
-    await this.contactRawPayload(contactId, true)
     this.emit('friendship', payload)
   }
 

@@ -15,11 +15,22 @@ export function parserContactRawPayload (contactPayload: WhatsAppContactPayload,
   }
   let name
 
+  const isFriend = contactPayload.isMyContact || contactPayload.isMe
+
+  const additionalInfo: any = {
+    status: isFriend ? ContactStatus.FRIEND : ContactStatus.NOT_FRIEND,
+  }
+
   if (contactPayload.isMe) {
     name = userName || contactPayload.pushname
     if (name === SPECIAL_BOT_PUSHNAME) {
       name = contactPayload.shortName
     }
+
+    additionalInfo.corpId = contactPayload.id._serialized
+    additionalInfo.sCorpId = contactPayload.id._serialized
+    additionalInfo.corpName = `${contactPayload.isBusiness ? 'Whatsapp Business' : 'Whatsapp'}:${contactPayload.id._serialized}`
+
   } else {
     /**
      * 在 iOS 中， pushname 是联系人自己设置的名字， name 是bot通讯录中联系人的名字
@@ -31,7 +42,6 @@ export function parserContactRawPayload (contactPayload: WhatsAppContactPayload,
 
   const number = contactPayload.number || contactPayload.id.user
 
-  const isFriend = contactPayload.isMyContact || contactPayload.isMe
   return {
     avatar: contactPayload.avatar,
     friend: isFriend,
@@ -42,8 +52,6 @@ export function parserContactRawPayload (contactPayload: WhatsAppContactPayload,
     type: type,
     handle: number,
     weixin: number,
-    additionalInfo: JSON.stringify({
-      status: isFriend ? ContactStatus.FRIEND : ContactStatus.NOT_FRIEND,
-    }),
+    additionalInfo: JSON.stringify(additionalInfo),
   }
 }

@@ -58,6 +58,7 @@ export default class WhatsAppManager extends WhatsAppBase {
     })
 
     this.contactEventHandler.on({
+      friendship: data => this.emit('friendship', data),
       dirty: data => this.emit('dirty', data),
     })
   }
@@ -138,6 +139,8 @@ export default class WhatsAppManager extends WhatsAppBase {
     whatsAppClient.on('group_update', this.groupEventHandler.onRoomUpdate.bind(this.groupEventHandler))
 
     whatsAppClient.on('contact_name_change', this.contactEventHandler.onContactNameChange.bind(this.contactEventHandler))
+    whatsAppClient.on('contact_add', this.contactEventHandler.onContactAdd.bind(this.contactEventHandler))
+    whatsAppClient.on('contact_remove', this.contactEventHandler.onContactRemove.bind(this.contactEventHandler))
 
     const events = [
       'authenticated',

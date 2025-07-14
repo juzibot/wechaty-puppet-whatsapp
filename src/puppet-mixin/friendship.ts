@@ -3,43 +3,21 @@ import { log } from '../config.js'
 import { WA_ERROR_TYPE } from '../exception/error-type.js'
 import WAError from '../exception/whatsapp-error.js'
 import type PuppetWhatsApp from '../puppet-whatsapp.js'
-import type { WhatsAppMessagePayload } from '../schema/whatsapp-type.js'
+import { Friendship } from '@juzi/wechaty-puppet/payloads'
 
 const PRE = 'MIXIN_FRIENDSHIP'
 
-export type FriendshipRawPayload = WhatsAppMessagePayload
-
-export async function friendshipRawPayload (this: PuppetWhatsApp, id: string): Promise<FriendshipRawPayload> {
-  if (id.startsWith('friendshipFromContact-')) {
-    // friendship from friendshipAdd
-    const data = getFriendshipFromContactData(id)
-    return {
-      from: data.contactId,
-      body: '',
-      id: {
-        id,
-      },
-      timestamp: data.timestamp,
-      type: PUPPET.types.Friendship.Confirm,
-    } as any
-  }
+export async function friendshipRawPayload (this: PuppetWhatsApp, id: string): Promise<Friendship> {
   const cache = await this.manager.getCacheManager()
-  const message = await cache.getMessageRawPayload(id)
-  if (!message) {
-    throw WAError(WA_ERROR_TYPE.ERR_MSG_NOT_FOUND, 'Message not found', `messageId: ${id}`)
+  const friendship = await cache.getFriendshipRawPayload(id)
+  if (!friendship) {
+    throw WAError(WA_ERROR_TYPE.ERR_MSG_NOT_FOUND, 'Friendship not found', `friendshipId: ${id}`)
   }
-  return message
+  return friendship
 }
 
-export async function friendshipRawPayloadParser (rawPayload: FriendshipRawPayload): Promise<PUPPET.payloads.Friendship> {
-  const contactId = rawPayload.fromMe ? rawPayload.to : rawPayload.from
-  return {
-    contactId,
-    hello: rawPayload.body,
-    id: rawPayload.id.id,
-    timestamp: rawPayload.timestamp,
-    type: PUPPET.types.Friendship.Confirm,
-  }
+export async function friendshipRawPayloadParser (rawPayload: Friendship): Promise<PUPPET.payloads.Friendship> {
+  return rawPayload
 }
 
 export async function friendshipSearchPhone (
@@ -94,34 +72,20 @@ export async function friendshipAdd (
 
   const contactPayload = await this.contactRawPayload(contactId)
 
+  const contactPhone = contactId.split('@')[0] || ''
+  await this.manager.getWhatsAppClient().saveOrEditAddressbookContact(contactPhone, contactPayload.pushname || '', '', true)
+
   if (hello) {
     await this.messageSendText(contactId, hello)
-  }
-
-  if (!(await this.contactRawPayloadParser(contactPayload)).friend) {
-    await this.contactRawPayload(contactId, true)
-    this.emit('friendship', {
-      friendshipId: `friendshipFromContact-${contactId}-timestamp-${String(Date.now())}`,
-    })
   }
 }
 
 export async function friendshipAccept (
+  this: PuppetWhatsApp,
   friendshipId: string,
 ): Promise<void> {
-  log.verbose(PRE, 'friendshipAccept(%s)', friendshipId)
-  return PUPPET.throwUnsupportedError()
-}
-
-export function getFriendshipFromContactData (id: string) {
-  if (!id.startsWith('friendshipFromContact-')) {
-    throw WAError(WA_ERROR_TYPE.ERR_CONTACT_NOT_FOUND, 'Not a friendshipFromContact id', `id: ${id}`)
-  }
-  const idLength = id.length
-  const contactId = id.substring(22, idLength - 24)
-  const timestamp = Number(id.substring(idLength - 13))
-  return {
-    contactId,
-    timestamp,
-  }
+  const friendshipPayload = await this.friendshipRawPayload(friendshipId)
+  const contactPhone = friendshipPayload.contactId.split('@')[0] || ''
+  const contactPayload = await this.contactRawPayload(friendshipPayload.contactId)
+  await this.manager.getWhatsAppClient().saveOrEditAddressbookContact(contactPhone, contactPayload.pushname || '', '', true)
 }

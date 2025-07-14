@@ -20,6 +20,7 @@ import {
   sleep,
 } from '../../helper/miscellaneous.js'
 import { RequestPool } from '../../request/request-pool.js'
+import { v4 } from 'uuid'
 
 const PRE = 'MessageEventHandler'
 
@@ -64,7 +65,16 @@ export default class MessageEventHandler extends WhatsAppBase {
       const contact = await cacheManager.getContactOrRoomRawPayload(contactId)
       const notFriend = !contact?.isMyContact
       if (notFriend) {
-        this.emit('friendship', { friendshipId: messageId })
+        const friendship: PUPPET.payloads.Friendship = {
+          id: v4(),
+          contactId,
+          hello: message.body,
+          timestamp: message.timestamp,
+          type: PUPPET.types.Friendship.Receive,
+          ticket: '',
+        }
+        await cacheManager.setFriendshipRawPayload(friendship.id, friendship)
+        this.emit('friendship', { friendshipId: friendship.id })
       }
     }
 
@@ -130,14 +140,6 @@ export default class MessageEventHandler extends WhatsAppBase {
       //   await sleep(100)
       // }
       // requestPool.resolveRequest(messageId)
-      const receiverId = message.to
-      if (receiverId && isContactId(receiverId)) {
-        const contact = await cacheManager.getContactOrRoomRawPayload(receiverId)
-        const notFriend = !contact?.isMyContact
-        if (notFriend) {
-          this.emit('friendship', { friendshipId: messageId })
-        }
-      }
       this.emit('message', { messageId })
     }
   }
