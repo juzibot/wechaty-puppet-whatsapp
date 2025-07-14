@@ -28,6 +28,8 @@ export default class ContactEventHandler extends WhatsAppBase {
       timestamp: Date.now(),
       type: PUPPET.types.Friendship.Confirm,
     }
+    const cacheManager = await this.manager.getCacheManager()
+    await cacheManager.setFriendshipRawPayload(friendship.id, friendship)
     this.emit('friendship', { friendshipId: friendship.id })
   }
 
@@ -40,6 +42,8 @@ export default class ContactEventHandler extends WhatsAppBase {
       timestamp: Date.now(),
       type: PUPPET.types.Friendship.Delete,
     }
+    const cacheManager = await this.manager.getCacheManager()
+    await cacheManager.setFriendshipRawPayload(friendship.id, friendship)
     this.emit('friendship', { friendshipId: friendship.id })
   }
 
