@@ -53,5 +53,7 @@ export function parserContactRawPayload (contactPayload: WhatsAppContactPayload,
     handle: number,
     weixin: number,
     additionalInfo: JSON.stringify(additionalInfo),
+    corporation: `${contactPayload.isBusiness ? 'Whatsapp Business' : 'Whatsapp'}:${contactPayload.id._serialized}`
+
   }
 }
