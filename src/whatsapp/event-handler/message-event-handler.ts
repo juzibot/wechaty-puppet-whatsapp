@@ -133,13 +133,16 @@ export default class MessageEventHandler extends WhatsAppBase {
       const messageId = message.id.id
       const cacheManager = await this.manager.getCacheManager()
       await cacheManager.setMessageRawPayload(messageId, message)
-      void sleep
+      // void sleep
       // const requestPool = RequestPool.Instance
       // const now = Date.now()
       // while (!requestPool.hasRequest(messageId) && Date.now() - now < 400) {
       //   await sleep(100)
       // }
       // requestPool.resolveRequest(messageId)
+      await sleep(1000)
+      // wait for sent message method return to avoid duplicate message
+      // self sent message is not time sensitive, so we can wait for a while
       this.emit('message', { messageId })
     }
   }
