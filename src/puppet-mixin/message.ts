@@ -293,7 +293,7 @@ export async function messageSendText (this: PuppetWhatsApp, conversationId: str
   return messageSend.call(this, conversationId, text, waMessageSendOptions, DEFAULT_TIMEOUT.MESSAGE_SEND_TEXT)
 }
 
-export async function messageSendFile (this: PuppetWhatsApp, conversationId: string, file: FileBox, options?: MessageSendOptions): Promise<void | string> {
+export async function messageSendFile (this: PuppetWhatsApp, conversationId: string, file: FileBox, options: MessageSendOptions = {}): Promise<void | string> {
   log.verbose(PRE, 'messageSendFile(%s, %s)', conversationId, file.name)
   await file.ready()
   const type = (file.mediaType && file.mediaType !== 'application/octet-stream')
@@ -308,6 +308,9 @@ export async function messageSendFile (this: PuppetWhatsApp, conversationId: str
   } else {
     const fileData = await file.toBase64()
     msgContent = new MessageMedia(file.mediaType!, fileData, file.name)
+  }
+  if (/^mp3\//.test(file.mediaType!) || /^wav\//.test(file.mediaType!)) {
+    options.sendAudioAsVoice = true
   }
   return messageSend.call(this, conversationId, msgContent, options, DEFAULT_TIMEOUT.MESSAGE_SEND_FILE)
 }
