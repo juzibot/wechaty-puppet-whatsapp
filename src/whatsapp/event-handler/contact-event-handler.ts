@@ -37,17 +37,16 @@ export default class ContactEventHandler extends WhatsAppBase {
 
   public async onContactRemove (contact: Contact) {
     log.info(PRE, `onContactRemove(${contact.id._serialized})`)
-    const friendship: PUPPET.payloads.Friendship = {
-      contactId: contact.id._serialized,
-      hello: '',
-      id: v4(),
-      timestamp: Date.now(),
-      type: PUPPET.types.Friendship.Delete,
-    }
-    const cacheManager = await this.manager.getCacheManager()
-    await cacheManager.setFriendshipRawPayload(friendship.id, friendship)
-    await cacheManager.deleteContactOrRoom(contact.id._serialized)
-    this.emit('friendship', { friendshipId: friendship.id })
+    // const friendship: PUPPET.payloads.Friendship = {
+    //   contactId: contact.id._serialized,
+    //   hello: '',
+    //   id: v4(),
+    //   timestamp: Date.now(),
+    //   type: PUPPET.types.Friendship.Delete,
+    // }
+    // const cacheManager = await this.manager.getCacheManager()
+    // await cacheManager.setFriendshipRawPayload(friendship.id, friendship)
+    // await cacheManager.deleteContactOrRoom(contact.id._serialized)
+    // this.emit('friendship', { friendshipId: friendship.id })
   }
-
 }

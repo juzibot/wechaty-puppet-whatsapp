@@ -15,10 +15,10 @@ export function parserContactRawPayload (contactPayload: WhatsAppContactPayload,
   }
   let name
 
-  const isFriend = contactPayload.isMyContact || contactPayload.isMe
+  // const isFriend = contactPayload.isMyContact || contactPayload.isMe
 
   const additionalInfo: any = {
-    status: isFriend ? ContactStatus.FRIEND : ContactStatus.NOT_FRIEND,
+    status: ContactStatus.FRIEND,
   }
 
   if (contactPayload.isMe) {
@@ -44,7 +44,7 @@ export function parserContactRawPayload (contactPayload: WhatsAppContactPayload,
 
   return {
     avatar: contactPayload.avatar,
-    friend: isFriend,
+    friend: true,
     gender: PUPPET.types.ContactGender.Unknown,
     id: contactPayload.id._serialized,
     name: name || contactPayload.id._serialized,
