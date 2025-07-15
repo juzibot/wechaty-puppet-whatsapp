@@ -252,7 +252,7 @@ export async function messageChannel (this: PuppetWhatsApp, messageId: string): 
 }
 
 export async function messageSend (this: PuppetWhatsApp, conversationId: string, content: MessageContent, options?: MessageSendOptions, timeout = DEFAULT_TIMEOUT.MESSAGE_SEND): Promise<string> {
-  log.info(PRE, 'messageSend(%s, %s)', conversationId, JSON.stringify(options))
+  log.verbose(PRE, 'messageSend(%s, %s)', conversationId, JSON.stringify(options))
   void timeout
   void RequestPool
 
@@ -272,7 +272,7 @@ export async function messageSend (this: PuppetWhatsApp, conversationId: string,
 }
 
 export async function messageSendText (this: PuppetWhatsApp, conversationId: string, text: string, options: PUPPET.types.MessageSendTextOptions = {}): Promise<void | string> {
-  log.verbose(PRE, 'messageSendText(%s, %s, %s)', conversationId, text, JSON.stringify(options))
+  log.info(PRE, 'messageSendText(%s, %s, %s)', conversationId, text, JSON.stringify(options))
   let mentions: string[] = []
   let quoteId: string | undefined
   if (Array.isArray(options)) {
@@ -294,12 +294,12 @@ export async function messageSendText (this: PuppetWhatsApp, conversationId: str
 }
 
 export async function messageSendFile (this: PuppetWhatsApp, conversationId: string, file: FileBox, options: MessageSendOptions = {}): Promise<void | string> {
-  log.verbose(PRE, 'messageSendFile(%s, %s)', conversationId, file.name)
   await file.ready()
   const type = (file.mediaType && file.mediaType !== 'application/octet-stream')
     ? file.mediaType.replace(/;.*$/, '')
     : path.extname(file.name)
-  log.silly(PRE, `message type: ${type}, filename: ${file.name}`)
+  log.info(PRE, 'messageSendFile(%s, %s)', conversationId, JSON.stringify(file.toJSON()), `type: ${type}, filename: ${file.name}`)
+
   const fileBoxJsonObject: any = file.toJSON() // FIXME: need import FileBoxJsonObject from file-box
   const remoteUrl = fileBoxJsonObject.url
   let msgContent
@@ -309,7 +309,7 @@ export async function messageSendFile (this: PuppetWhatsApp, conversationId: str
     const fileData = await file.toBase64()
     msgContent = new MessageMedia(file.mediaType!, fileData, file.name)
   }
-  if (/^mp3\//.test(file.mediaType!) || /^wav\//.test(file.mediaType!)) {
+  if (/^mp3\//.test(type) || /^wav\//.test(type)) {
     options.sendAudioAsVoice = true
   }
   return messageSend.call(this, conversationId, msgContent, options, DEFAULT_TIMEOUT.MESSAGE_SEND_FILE)
