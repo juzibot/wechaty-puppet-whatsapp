@@ -70,10 +70,11 @@ export async function friendshipAdd (
     throw WAError(WA_ERROR_TYPE.ERR_CONTACT_NOT_FOUND, 'Not a registered user on WhatsApp.', `contactId: ${contactId}`)
   }
 
-  const contactPayload = await this.contactRawPayload(contactId)
-
-  const contactPhone = contactId.split('@')[0] || ''
-  await this.manager.getWhatsAppClient().saveOrEditAddressbookContact(contactPhone, contactPayload.pushname || '', '', true)
+  const contactPayload = await this.contactRawPayload(contactId, true)
+  if (!contactPayload.isMyContact) {
+    const contactPhone = contactId.split('@')[0] || ''
+    await this.manager.getWhatsAppClient().saveOrEditAddressbookContact(contactPhone, contactPayload.pushname || '', '', true)
+  }
 
   if (hello) {
     await this.messageSendText(contactId, hello)
@@ -86,6 +87,8 @@ export async function friendshipAccept (
 ): Promise<void> {
   const friendshipPayload = await this.friendshipRawPayload(friendshipId)
   const contactPhone = friendshipPayload.contactId.split('@')[0] || ''
-  const contactPayload = await this.contactRawPayload(friendshipPayload.contactId)
-  await this.manager.getWhatsAppClient().saveOrEditAddressbookContact(contactPhone, contactPayload.pushname || '', '', true)
+  const contactPayload = await this.contactRawPayload(friendshipPayload.contactId, true)
+  if (!contactPayload.isMyContact) {
+    await this.manager.getWhatsAppClient().saveOrEditAddressbookContact(contactPhone, contactPayload.pushname || '', '', true)
+  }
 }

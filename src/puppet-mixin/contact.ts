@@ -76,27 +76,17 @@ export async function contactAvatar (this: PuppetWhatsApp, contactId: string, fi
   }
 }
 
-export async function contactRawPayload (this: PuppetWhatsApp, id: string, saveTempContact = false): Promise<WhatsAppContactPayload> {
+export async function contactRawPayload (this: PuppetWhatsApp, id: string, forceSync = false): Promise<WhatsAppContactPayload> {
   log.verbose(PRE, 'contactRawPayload(%s)', id)
   if (!isContactId(id)) {
     throw WAError(WA_ERROR_TYPE.ERR_CONTACT_NOT_FOUND, `please check contact id: ${id} again.`)
   }
   const cacheManager = await this.manager.getCacheManager()
   let contact = await cacheManager.getContactOrRoomRawPayload(id)
-  if (contact) {
-    if (saveTempContact) {
-      contact.isMyContact = true
-      contact.isUser = true
-      await cacheManager.setContactOrRoomRawPayload(id, contact)
-    }
-  } else {
+  if (!contact || forceSync) {
     const rawContact = await this.manager.getContactById(id)
     const avatar = await rawContact.getProfilePicUrl() || ''
     contact = Object.assign(rawContact, { avatar })
-    if (saveTempContact) {
-      contact.isMyContact = true
-      contact.isUser = true
-    }
     await cacheManager.setContactOrRoomRawPayload(id, contact)
   }
   return contact
