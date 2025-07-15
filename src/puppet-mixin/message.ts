@@ -298,7 +298,7 @@ export async function messageSendFile (this: PuppetWhatsApp, conversationId: str
   const type = (file.mediaType && file.mediaType !== 'application/octet-stream')
     ? file.mediaType.replace(/;.*$/, '')
     : path.extname(file.name)
-  log.info(PRE, 'messageSendFile(%s, %s)', conversationId, JSON.stringify(file.toJSON()), `type: ${type}, filename: ${file.name}`)
+  log.info(PRE, `messageSendFile(${conversationId}, ${JSON.stringify(file.toJSON())}) type: ${type}, filename: ${file.name}`)
 
   const fileBoxJsonObject: any = file.toJSON() // FIXME: need import FileBoxJsonObject from file-box
   const remoteUrl = fileBoxJsonObject.url
