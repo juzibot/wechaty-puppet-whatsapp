@@ -79,7 +79,7 @@ export async function contactAvatar (this: PuppetWhatsApp, contactId: string, fi
 export async function contactRawPayload (this: PuppetWhatsApp, id: string, forceSync = false): Promise<WhatsAppContactPayload> {
   log.verbose(PRE, 'contactRawPayload(%s)', id)
   if (!isContactId(id)) {
-    throw WAError(WA_ERROR_TYPE.ERR_CONTACT_NOT_FOUND, `please check contact id: ${id} again.`)
+    throw WAError(WA_ERROR_TYPE.ERR_CONTACT_NOT_FOUND, `please check contact id: ${id.toString()} again.`)
   }
   const cacheManager = await this.manager.getCacheManager()
   let contact = await cacheManager.getContactOrRoomRawPayload(id)

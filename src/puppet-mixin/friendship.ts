@@ -64,7 +64,7 @@ export async function friendshipAdd (
   //   hello = STRINGS[LANGUAGE].DEFAULT_HELLO_MESSAGE
   // }
 
-  log.verbose(PRE, 'friendshipAdd(%s, %s)', contactId, JSON.stringify(option))
+  log.info(PRE, 'friendshipAdd(%s, %s)', contactId, JSON.stringify(option))
   const isUser = await this.manager.isWhatsappUser(contactId)
   if (!isUser) {
     throw WAError(WA_ERROR_TYPE.ERR_CONTACT_NOT_FOUND, 'Not a registered user on WhatsApp.', `contactId: ${contactId}`)
@@ -73,7 +73,7 @@ export async function friendshipAdd (
   const contactPayload = await this.contactRawPayload(contactId, true)
   if (!contactPayload.isMyContact) {
     const contactPhone = contactId.split('@')[0] || ''
-    await this.manager.getWhatsAppClient().saveOrEditAddressbookContact(contactPhone, contactPayload.pushname || '', '', true)
+    await this.manager.getWhatsAppClient().saveOrEditAddressbookContact(contactPhone, contactPayload.pushname || contactPhone, '', true)
   }
 
   if (hello) {

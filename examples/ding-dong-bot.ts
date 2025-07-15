@@ -169,3 +169,18 @@ Please wait... I'm trying to login in...
 
 `
 console.info(welcome)
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Config', '###########################');
+  console.error('Config', `unhandledRejection: ${reason} ${promise}`);
+  console.error('Config', '###########################');
+  promise.catch(err => {
+      const message = err.message;
+      console.error('Config', `process.on(unhandledRejection) promise.catch(${message})`);
+  });
+});
+process.on('uncaughtException', e => {
+  console.error('Config', '###########################');
+  console.error('Config', `uncaughtException: ${e.stack}`);
+  console.error('Config', '###########################');
+});
