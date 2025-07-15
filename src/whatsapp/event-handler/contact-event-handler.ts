@@ -49,4 +49,5 @@ export default class ContactEventHandler extends WhatsAppBase {
     // await cacheManager.deleteContactOrRoom(contact.id._serialized)
     // this.emit('friendship', { friendshipId: friendship.id })
   }
+
 }
