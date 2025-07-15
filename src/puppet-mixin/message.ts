@@ -309,7 +309,7 @@ export async function messageSendFile (this: PuppetWhatsApp, conversationId: str
     const fileData = await file.toBase64()
     msgContent = new MessageMedia(file.mediaType!, fileData, file.name)
   }
-  if (/^mp3\//.test(type) || /^wav\//.test(type)) {
+  if (/^mpeg\//.test(type) || /^audio\//.test(type)) {
     options.sendAudioAsVoice = true
   }
   return messageSend.call(this, conversationId, msgContent, options, DEFAULT_TIMEOUT.MESSAGE_SEND_FILE)
