@@ -76,6 +76,13 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
     log.verbose(PRE, 'onWhatsAppReady()')
     this.hasLogin = true
     this.clearQrcodeOrLoginCheckTimer()
+    try {
+      const whatsapp = this.getWhatsAppClient()
+      this.botId = whatsapp.info.wid._serialized
+      await this.manager.initCache(this.botId)
+    } catch (error) {
+      throw WAError(WA_ERROR_TYPE.ERR_INIT, `Can not get bot id from WhatsApp client, current state: ${await whatsapp.getState()}`, JSON.stringify(error))
+    }
     const contactOrRoomList = await this.manager.syncContactOrRoomList()
     await this.onLogin(contactOrRoomList)
     await this.onReady(contactOrRoomList)
@@ -85,20 +92,14 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
   public async onLogin (contactOrRoomList: WhatsAppContact[]) {
     log.verbose(PRE, 'onLogin()')
     const whatsapp = this.getWhatsAppClient()
-    try {
-      this.botId = whatsapp.info.wid._serialized
-    } catch (error) {
-      throw WAError(WA_ERROR_TYPE.ERR_INIT, `Can not get bot id from WhatsApp client, current state: ${await whatsapp.getState()}`, JSON.stringify(error))
-    }
     log.info(PRE, `WhatsApp Client Info: ${JSON.stringify(whatsapp.info)}`)
 
-    await this.manager.initCache(this.botId)
     const cacheManager = await this.manager.getCacheManager()
 
-    const botSelf = await this.manager.requestManager.getContactById(this.botId)
-    await cacheManager.setContactOrRoomRawPayload(this.botId, {
+    const botSelf = await this.manager.requestManager.getContactById(this.botId!)
+    await cacheManager.setContactOrRoomRawPayload(this.botId!, {
       ...botSelf,
-      avatar: await this.manager.requestManager.getAvatarUrl(this.botId),
+      avatar: await this.manager.requestManager.getAvatarUrl(this.botId!),
     })
 
     const batchSize = 500
@@ -112,7 +113,7 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
       await cacheManager.setContactOrRoomRawPayload(contactOrRoomId, contactWithAvatar)
     })
 
-    this.emit('login', this.botId)
+    this.emit('login', this.botId!)
     log.info(PRE, `onLogin(${this.botId}})`)
   }
 
