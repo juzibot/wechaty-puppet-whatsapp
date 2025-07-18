@@ -76,8 +76,8 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
     log.verbose(PRE, 'onWhatsAppReady()')
     this.hasLogin = true
     this.clearQrcodeOrLoginCheckTimer()
+    const whatsapp = this.getWhatsAppClient()
     try {
-      const whatsapp = this.getWhatsAppClient()
       this.botId = whatsapp.info.wid._serialized
       await this.manager.initCache(this.botId)
     } catch (error) {
