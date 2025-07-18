@@ -202,8 +202,12 @@ export default class Manager extends EE<ManagerEvents> {
 
   public async syncContactOrRoomList () {
     const whatsapp = this.getWhatsAppClient()
+    const now = Date.now()
+    log.info(PRE, `syncContactOrRoomList() whatsapp.getContacts() start at ${new Date().toISOString()}`)
     const contactList: WhatsAppContact[] = await whatsapp.getContacts()
+    log.info(PRE, `syncContactOrRoomList() whatsapp.getContacts() end at ${new Date().toISOString()}, cost ${Date.now() - now}ms`)
     const contactOrRoomList = contactList.filter(c => c.id.server !== 'broadcast' && c.id._serialized !== '0@c.us')
+    log.info(PRE, `syncContactOrRoomList() contactOrRoomList.length: ${contactOrRoomList.length}`)
     return contactOrRoomList
   }
 

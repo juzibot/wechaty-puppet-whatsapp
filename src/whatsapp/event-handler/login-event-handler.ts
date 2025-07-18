@@ -74,6 +74,10 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
 
   public async onWhatsAppReady () {
     log.verbose(PRE, 'onWhatsAppReady()')
+    if (this.hasLogin) {
+      log.info(PRE, 'onWhatsAppReady() already login, skip')
+      return
+    }
     this.hasLogin = true
     this.clearQrcodeOrLoginCheckTimer()
     const whatsapp = this.getWhatsAppClient()
@@ -83,13 +87,13 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
     } catch (error) {
       throw WAError(WA_ERROR_TYPE.ERR_INIT, `Can not get bot id from WhatsApp client, current state: ${await whatsapp.getState()}`, JSON.stringify(error))
     }
+    await this.onLogin()
     const contactOrRoomList = await this.manager.syncContactOrRoomList()
-    await this.onLogin(contactOrRoomList)
     await this.onReady(contactOrRoomList)
     this.manager.startSchedule()
   }
 
-  public async onLogin (contactOrRoomList: WhatsAppContact[]) {
+  public async onLogin () {
     log.verbose(PRE, 'onLogin()')
     const whatsapp = this.getWhatsAppClient()
     log.info(PRE, `WhatsApp Client Info: ${JSON.stringify(whatsapp.info)}`)
@@ -100,17 +104,6 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
     await cacheManager.setContactOrRoomRawPayload(this.botId!, {
       ...botSelf,
       avatar: await this.manager.requestManager.getAvatarUrl(this.botId!),
-    })
-
-    const batchSize = 500
-    await batchProcess(batchSize, contactOrRoomList, async (contactOrRoom: WhatsAppContact) => {
-      const contactOrRoomId = contactOrRoom.id._serialized
-      const contactInCache = await cacheManager.getContactOrRoomRawPayload(contactOrRoomId)
-      if (contactInCache) {
-        return
-      }
-      const contactWithAvatar = Object.assign(contactOrRoom, { avatar: '' })
-      await cacheManager.setContactOrRoomRawPayload(contactOrRoomId, contactWithAvatar)
     })
 
     this.emit('login', this.botId!)
