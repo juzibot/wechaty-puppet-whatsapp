@@ -134,13 +134,19 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
         }
         await cacheManager.setContactOrRoomRawPayload(contactOrRoomId, contactWithAvatar)
       } else if (isRoomId(contactOrRoomId)) {
-        const memberList = await this.manager.syncRoomMemberList(contactOrRoomId)
+        let memberList: string[] = []
+        try {
+          memberList = await this.manager.syncRoomMemberList(contactOrRoomId)
+        } catch (error) {
+          log.warn(PRE, `syncRoomMemberList(${contactOrRoomId}) failed, ${JSON.stringify(error)}`)
+        }
         if (memberList.length > 0) {
           roomCount++
           await cacheManager.setContactOrRoomRawPayload(contactOrRoomId, contactWithAvatar)
         } else {
           await cacheManager.deleteContactOrRoom(contactOrRoomId)
           await cacheManager.deleteRoomMemberIdList(contactOrRoomId)
+          return
         }
       } else {
         log.warn(PRE, `Unknown contact type: ${JSON.stringify(contactOrRoom)}`)
