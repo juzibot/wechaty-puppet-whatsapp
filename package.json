@@ -30,7 +30,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/juzibot/puppet-whatsapp.git"
+    "url": "git+https://github.com/juzibot/wechaty-puppet-whatsapp.git"
   },
   "keywords": [
     "chatie",
@@ -45,9 +45,9 @@
   "author": "Huan LI <zixia@zixia.net>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/juzibot/puppet-whatsapp/issues"
+    "url": "https://github.com/juzibot/wechaty-puppet-whatsapp/issues"
   },
-  "homepage": "https://github.com/juzibot/puppet-whatsapp#readme",
+  "homepage": "https://github.com/juzibot/wechaty-puppet-whatsapp#readme",
   "devDependencies": {
     "@chatie/eslint-config": "1.0.4",
     "@chatie/semver": "^0.4.7",
