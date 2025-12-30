@@ -1,8 +1,4 @@
-import type {
-  LaunchOptions,
-  BrowserConnectOptions,
-  BrowserLaunchArgumentOptions,
-} from 'puppeteer'
+import * as puppeteer from 'puppeteer'
 
 import type {
   WhatsAppClientType,
@@ -76,7 +72,7 @@ export default class WhatsAppManager extends WhatsAppBase {
     log.verbose(PRE, 'initWhatsAppClient()')
     const { puppeteer = {}, ...restOptions } = options
     const { args, ...restPuppeteerOptions } = puppeteer
-    const puppeteerOptions: LaunchOptions & BrowserLaunchArgumentOptions & BrowserConnectOptions = {
+    const puppeteerOptions: puppeteer.LaunchOptions & puppeteer.ConnectOptions = {
       /**
        * No usable sandbox!
        *  https://github.com/pedroslopez/whatsapp-web.js/issues/344#issuecomment-691570764
