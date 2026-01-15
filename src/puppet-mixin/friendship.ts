@@ -4,6 +4,7 @@ import { WA_ERROR_TYPE } from '../exception/error-type.js'
 import WAError from '../exception/whatsapp-error.js'
 import type PuppetWhatsApp from '../puppet-whatsapp.js'
 import { Friendship } from '@juzi/wechaty-puppet/payloads'
+import { v4 } from 'uuid'
 
 const PRE = 'MIXIN_FRIENDSHIP'
 
@@ -74,6 +75,15 @@ export async function friendshipAdd (
   if (!contactPayload.isMyContact) {
     const contactPhone = contactId.split('@')[0] || ''
     await this.manager.getWhatsAppClient().saveOrEditAddressbookContact(contactPhone, contactPayload.pushname || contactPhone, '', true)
+    const friendshipPayload: PUPPET.payloads.Friendship = {
+      id: v4(),
+      contactId: contactId,
+      type: PUPPET.types.Friendship.Confirm,
+      timestamp: Date.now(),
+    }
+    const cache = await this.manager.getCacheManager()
+    await cache.setFriendshipRawPayload(friendshipPayload.id, friendshipPayload)
+    this.emit('friendship', friendshipPayload.id)
   }
 
   if (hello) {
