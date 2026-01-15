@@ -49,6 +49,7 @@ export default class Manager extends EE<ManagerEvents> {
       'room-topic': data => this.emit('room-topic', data),
       scan: data => this.emit('scan', data),
       dirty: data => this.onDirty(data),
+      error: error => this.emit('error', error),
     })
 
     return new Proxy(this, {

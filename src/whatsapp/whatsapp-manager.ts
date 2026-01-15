@@ -138,6 +138,10 @@ export default class WhatsAppManager extends WhatsAppBase {
     whatsAppClient.on('contact_add', this.contactEventHandler.onContactAdd.bind(this.contactEventHandler))
     whatsAppClient.on('contact_remove', this.contactEventHandler.onContactRemove.bind(this.contactEventHandler))
 
+    whatsAppClient.on('chrome_oom', () => {
+      this.emit('error', 'PUPPETEER EXPLORER OOM')
+    })
+
     const events = [
       'authenticated',
       'ready',
