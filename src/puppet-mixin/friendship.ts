@@ -83,7 +83,7 @@ export async function friendshipAdd (
     }
     const cache = await this.manager.getCacheManager()
     await cache.setFriendshipRawPayload(friendshipPayload.id, friendshipPayload)
-    this.emit('friendship', friendshipPayload.id)
+    this.emit('friendship', { friendshipId: friendshipPayload.id })
   }
 
   if (hello) {
