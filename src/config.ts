@@ -7,6 +7,7 @@ import { packageJson } from './package-json.js'
 import os from 'os'
 import path from 'path'
 import { mkdirpSync } from 'fs-extra'
+import { log } from '@juzi/wechaty-puppet'
 export { log } from '@juzi/wechaty-puppet'
 export {
   FileBox,
@@ -82,3 +83,18 @@ export const DEFAULT_TIMEOUT = {
 
 export const HISTORY_MESSAGES_DAYS = Number(process.env['HISTORY_MESSAGES_DAYS'] || '3')
 export const MAX_HEARTBEAT_MISSED = Number(process.env['MAX_HEARTBEAT_MISSED'] || '3')
+
+process.on('uncaughtException', e => {
+  log.error('whatsapp Config', '###########################')
+  log.error('whatsapp Config', 'uncaughtException: %s %s', e.stack)
+  log.error('whatsapp Config', '###########################')
+})
+
+process.on('unhandledRejection', (reason: Error | any, promise) => {
+  log.error('whatsapp Config', '###########################')
+  log.error('whatsapp Config', 'unhandledRejection: %s %s', reason.stack || reason, promise)
+  log.error('whatsapp Config', '###########################')
+  promise.catch(err => {
+    log.error('whatsapp Config', 'process.on(unhandledRejection) promise.catch(%s)\n', err.stack)
+  })
+})
