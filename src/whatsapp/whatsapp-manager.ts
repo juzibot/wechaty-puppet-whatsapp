@@ -91,7 +91,6 @@ export default class WhatsAppManager extends WhatsAppBase {
       puppeteer: puppeteerOptions,
       // can no longer customize refresh interval
       // refresh time gap is set to 15 seconds
-      restartOnAuthFail: true,
       ...restOptions,
     })
     await this.setSession(session)

@@ -6,7 +6,6 @@ export type {
   ClientInfo,
   ClientInfoPhone,
   ClientOptions,
-  ClientSession,
   BatteryInfo,
   CreateGroupResult,
   // GroupNotification,
