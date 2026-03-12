@@ -80,4 +80,3 @@ test('generate room join event', async t => {
 
   t.pass('generate room join event pass')
 })
-
