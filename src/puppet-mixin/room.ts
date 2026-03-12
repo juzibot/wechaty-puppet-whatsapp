@@ -313,13 +313,15 @@ export async function roomRawPayload (this: PuppetWhatsApp, id: string): Promise
   }
   const cacheManager = await this.manager.getCacheManager()
   const room = await cacheManager.getContactOrRoomRawPayload(id)
+  const roomAnnounce = await this.roomAnnounce(id)
   if (room) {
+    room.announce = roomAnnounce
     return room
   } else {
     try {
       const rawRoom = await this.manager.getContactById(id)
       const avatar = await rawRoom.getProfilePicUrl() || ''
-      const room = Object.assign(rawRoom, { avatar })
+      const room = Object.assign(rawRoom, { avatar, announce: roomAnnounce })
       await cacheManager.setContactOrRoomRawPayload(id, room)
       return room
     } catch (error) {

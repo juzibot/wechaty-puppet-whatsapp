@@ -119,6 +119,7 @@ class PuppetWhatsapp extends PUPPET.Puppet {
       'room-join': this.onRoomJoin.bind(this),
       'room-leave': this.onRoomLeave.bind(this),
       'room-topic': this.onRoomTopic.bind(this),
+      'room-announce': this.onRoomAnnounce.bind(this),
       scan: this.onScan.bind(this),
     })
 
@@ -226,6 +227,12 @@ class PuppetWhatsapp extends PUPPET.Puppet {
 
   private async onRoomInvite (payload: PUPPET.payloads.EventRoomInvite) {
     this.emit('room-invite', payload)
+  }
+
+  private async onRoomAnnounce (payload: PUPPET.payloads.EventRoomAnnounce) {
+    const roomId = payload.roomId
+    await this.dirtyPayload(PUPPET.types.Payload.Room, roomId)
+    this.emit('room-announce', payload)
   }
 
   private async onReady () {
