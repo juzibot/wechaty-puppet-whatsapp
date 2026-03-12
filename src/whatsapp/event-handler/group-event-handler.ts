@@ -11,7 +11,6 @@ import type {
 import { log } from '../../config.js'
 import {
   genRoomTopicEvent,
-  genRoomAnnounce,
   genRoomJoinEvent,
 } from '../../helper/pure-function/room-event-generator.js'
 

@@ -4,13 +4,8 @@ import {
 } from 'tstest'
 
 import {
-  MessageTypes as WhatsAppMessageType,
-} from '../../schema/whatsapp-interface.js'
-
-import {
   genRoomTopicEvent,
   genRoomJoinEvent,
-  genRoomAnnounce,
 } from './room-event-generator.js'
 
 test('generate room topic event', async t => {
@@ -86,35 +81,3 @@ test('generate room join event', async t => {
   t.pass('generate room join event pass')
 })
 
-test('generate room announce message', async t => {
-  const roomUpdateForDescription = {
-    id: {
-      fromMe: false,
-      remote: '120363037070043803@g.us',
-      id: '3A1D56DE1A988011D635',
-      participant: '8613812345679@c.us',
-      _serialized: 'false_120363037070043803@g.us_3A1D56DE1A988011D635_8613812345679@c.us',
-    },
-    body: '',
-    type: 'description',
-    timestamp: 1644842154,
-    chatId: '8613812345679@c.us',
-    author: '8613812345679@c.us',
-    recipientIds: [],
-  } as any
-  const description = 'wechaty puppet whatsapp room description for room announce message'
-  const messagePayload = genRoomAnnounce(roomUpdateForDescription, description)
-  t.ok(
-    messagePayload.type === WhatsAppMessageType.TEXT
-    && messagePayload.author === roomUpdateForDescription.author
-    && messagePayload.body === description
-    && messagePayload.to === roomUpdateForDescription.id.remote,
-  )
-
-  t.ok(messagePayload.type === WhatsAppMessageType.TEXT, 'should get correct message type')
-  t.ok(messagePayload.author === roomUpdateForDescription.author, 'should get correct author')
-  t.ok(messagePayload.body === description, 'shuold get correct anouncement content')
-  t.ok(messagePayload.to === roomUpdateForDescription.id.remote, 'shuold get correct room id')
-
-  t.pass('generate room announce message pass')
-})
