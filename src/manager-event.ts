@@ -6,6 +6,7 @@ export type ManagerEvents = {
   'room-leave': (payload: PUPPET.payloads.EventRoomLeave) => any,
   'room-topic': (payload: PUPPET.payloads.EventRoomTopic) => any,
   'room-invite': (payload: PUPPET.payloads.EventRoomInvite) => any,
+  'room-announce': (payload: PUPPET.payloads.EventRoomAnnounce) => any,
   'scan': (payload: PUPPET.payloads.EventScan) => any,
   'login': (userId: string) => any,
   'logout': (userId: string, message: string) =>  any,

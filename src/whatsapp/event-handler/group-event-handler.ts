@@ -77,11 +77,13 @@ export default class GroupEventHandler extends WhatsAppBase {
         this.emit('room-topic', roomTopicPayload)
         break
       case GroupNotificationTypes.DESCRIPTION:
-        const roomChat = await this.manager.getRoomChatById(roomId)
-        const roomMetadata = roomChat.groupMetadata
-        const description = roomMetadata.desc
-        const msgPayload = genRoomAnnounce(notification, description)
-        await this.manager.processMessage(msgPayload as any) // FIXME: how to use method of another class which extends from the same base class.
+        this.emit('room-announce', {
+          changerId: notification.author,
+          newAnnounce: notification.body,
+          oldAnnounce: '',
+          roomId,
+          timestamp: notification.timestamp,
+        })
         break
       case GroupNotificationTypes.CREATE:
         const members = await this.manager.syncRoomMemberList(roomId)
