@@ -4,9 +4,6 @@ import type {
   GroupNotification,
   WhatsAppContactPayload,
 } from '../../schema/whatsapp-type.js'
-import {
-  MessageTypes as WhatsAppMessageType,
-} from '../../schema/whatsapp-interface.js'
 
 export function genRoomTopicEvent (notification: GroupNotification, roomPayload: WhatsAppContactPayload) {
   const roomIdObj = notification.id
