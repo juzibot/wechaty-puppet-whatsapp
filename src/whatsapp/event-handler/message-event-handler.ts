@@ -51,7 +51,7 @@ export default class MessageEventHandler extends WhatsAppBase {
     }
     if (message.type === 'notification_template' && (message as any).subtype === 'contact_info_card') {
       message.type = WhatsAppMessageType.TEXT
-      message.body = '[客户通过广告发起对话]'
+      message.body = '[客户通过广告或其他渠道发起对话]'
     }
     await cacheManager.setMessageRawPayload(messageId, message)
     if ((message as WhatsAppMessagePayload)._data?.caption && (message as WhatsAppMessagePayload)._data?.type === 'image') { // see issue: https://github.com/wechaty/puppet-whatsapp/issues/390
