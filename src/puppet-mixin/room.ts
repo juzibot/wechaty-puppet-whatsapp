@@ -259,7 +259,7 @@ export async function roomAnnounce (this: PuppetWhatsApp, roomId: string, text?:
     return roomChat.description
   }
   const roomChat = await this.manager.getRoomChatById(roomId)
-  await roomChat.setDescription(text)
+  await roomChat.setDescription((text || undefined) as any)
   await this.dirtyPayload(PUPPET.types.Payload.Room, roomId)
 }
 
