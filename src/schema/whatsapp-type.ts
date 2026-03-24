@@ -75,3 +75,4 @@ export interface GroupNotificationId {
 }
 
 export type GroupNotification = {id: GroupNotificationId} & Omit<WhatsApp.GroupNotification, 'id'>
+export const SpecialSystemType = 'SpecialSystem' as WhatsApp.MessageTypes

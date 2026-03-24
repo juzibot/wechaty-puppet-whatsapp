@@ -9,9 +9,10 @@ import {
 } from '../../schema/whatsapp-interface.js'
 import WhatsAppBase from '../whatsapp-base.js'
 
-import type {
-  WhatsAppMessage,
-  WhatsAppMessagePayload,
+import {
+  SpecialSystemType,
+  type WhatsAppMessage,
+  type WhatsAppMessagePayload,
 } from '../../schema/whatsapp-type.js'
 import {
   isContactId,
@@ -52,6 +53,10 @@ export default class MessageEventHandler extends WhatsAppBase {
     if (message.type === 'notification_template' && (message as any).subtype === 'contact_info_card') {
       message.type = WhatsAppMessageType.TEXT
       message.body = '[客户通过广告或其他渠道发起对话]'
+    }
+    if (message.type === 'e2e_notification' && (message as any).subtype === 'encrypt') {
+      message.type = SpecialSystemType
+      message.body = '消息和通话已进行端到端加密。只有此聊天中的成员可以查看、收听或分享。'
     }
     await cacheManager.setMessageRawPayload(messageId, message)
     if ((message as WhatsAppMessagePayload)._data?.caption && (message as WhatsAppMessagePayload)._data?.type === 'image') { // see issue: https://github.com/wechaty/puppet-whatsapp/issues/390

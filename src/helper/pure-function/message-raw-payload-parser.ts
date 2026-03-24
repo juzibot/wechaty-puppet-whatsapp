@@ -8,8 +8,9 @@ import {
   MessageTypes as WhatsAppMessageType,
 } from '../../schema/whatsapp-interface.js'
 
-import type {
-  WhatsAppMessagePayload,
+import {
+  SpecialSystemType,
+  type WhatsAppMessagePayload,
 } from '../../schema/whatsapp-type.js'
 
 export function parserMessageRawPayload (messagePayload: WhatsAppMessagePayload): PUPPET.payloads.Message {
@@ -120,6 +121,8 @@ function getMessageType (messagePayload: WhatsAppMessagePayload): PUPPET.types.M
     case WhatsAppMessageType.PRODUCT:
       type = PUPPET.types.Message.MiniProgram
       break
+    case SpecialSystemType:
+      type = PUPPET.types.Message.System
   }
   return type
 }
