@@ -33,13 +33,15 @@ export default class MessageEventHandler extends WhatsAppBase {
       log.warn('message ignored because login process is not finished')
       return
     }
+    const _data = (message as any)._data
 
     // @ts-ignore
     if (
       message.type === 'multi_vcard'
       || (message.type === 'e2e_notification'
       && message.body === ''
-      && !message.author)
+      && !message.author
+      && _data.subtype !== 'encrypt')
     ) {
       // skip room join notification and multi_vcard message
       return
@@ -50,11 +52,11 @@ export default class MessageEventHandler extends WhatsAppBase {
     if (messageInCache) {
       return
     }
-    if (message.type === 'notification_template' && (message as any).subtype === 'contact_info_card') {
+    if (_data.type === 'notification_template' && _data.subtype === 'contact_info_card') {
       message.type = WhatsAppMessageType.TEXT
       message.body = '[客户通过广告或其他渠道发起对话]'
     }
-    if (message.type === 'e2e_notification' && (message as any).subtype === 'encrypt') {
+    if (_data.type === 'e2e_notification' && _data.subtype === 'encrypt') {
       message.type = SpecialSystemType
       message.body = '消息和通话已进行端到端加密。只有此聊天中的成员可以查看、收听或分享。'
     }
