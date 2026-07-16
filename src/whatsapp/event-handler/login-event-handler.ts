@@ -87,9 +87,16 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
     } catch (error) {
       throw WAError(WA_ERROR_TYPE.ERR_INIT, `Can not get bot id from WhatsApp client, current state: ${await whatsapp.getState()}`, JSON.stringify(error))
     }
-    await this.onLogin()
-    const contactOrRoomList = await this.manager.syncContactOrRoomList()
-    await this.onReady(contactOrRoomList)
+    try {
+      await this.onLogin()
+      const contactOrRoomList = await this.manager.syncContactOrRoomList()
+      await this.onReady(contactOrRoomList)
+    } catch (error) {
+      // onWhatsAppReady 作为事件监听器运行,异常若不在此兜住会变成
+      // unhandledRejection,ready 事件静默丢失且无明确报错
+      log.error(PRE, `onWhatsAppReady() failed, ready event will not be emitted, error: ${(error as Error).stack}`)
+      throw error
+    }
     this.manager.startSchedule()
   }
 
@@ -121,43 +128,52 @@ export default class LoginEventHandler extends WhatsAppBase { // FIXME: I have n
     let contactCount = 0
     let roomCount = 0
 
-    const cacheManager = await this.manager.getCacheManager()
-    const batchSize = 100
-    await batchProcess(batchSize, contactOrRoomList, async (contactOrRoom: WhatsAppContact) => {
-      const contactOrRoomId = contactOrRoom.id._serialized
-      const avatar = await contactOrRoom.getProfilePicUrl()
-      const contactWithAvatar = Object.assign(contactOrRoom, { avatar })
-      if (isContactId(contactOrRoomId)) {
-        contactCount++
-        if (contactOrRoom.isMyContact) {
-          friendCount++
-        }
-        await cacheManager.setContactOrRoomRawPayload(contactOrRoomId, contactWithAvatar)
-      } else if (isRoomId(contactOrRoomId)) {
-        let memberList: string[] = []
+    try {
+      const cacheManager = await this.manager.getCacheManager()
+      const batchSize = 100
+      await batchProcess(batchSize, contactOrRoomList, async (contactOrRoom: WhatsAppContact) => {
+        const contactOrRoomId = contactOrRoom.id._serialized
         try {
-          memberList = await this.manager.syncRoomMemberList(contactOrRoomId)
+          const avatar = await contactOrRoom.getProfilePicUrl()
+          const contactWithAvatar = Object.assign(contactOrRoom, { avatar })
+          if (isContactId(contactOrRoomId)) {
+            contactCount++
+            if (contactOrRoom.isMyContact) {
+              friendCount++
+            }
+            await cacheManager.setContactOrRoomRawPayload(contactOrRoomId, contactWithAvatar)
+          } else if (isRoomId(contactOrRoomId)) {
+            let memberList: string[] = []
+            try {
+              memberList = await this.manager.syncRoomMemberList(contactOrRoomId)
+            } catch (error) {
+              log.warn(PRE, `syncRoomMemberList(${contactOrRoomId}) failed, ${JSON.stringify(error)}`)
+            }
+            if (memberList.length > 0) {
+              roomCount++
+              await cacheManager.setContactOrRoomRawPayload(contactOrRoomId, contactWithAvatar)
+            } else {
+              await cacheManager.deleteContactOrRoom(contactOrRoomId)
+              await cacheManager.deleteRoomMemberIdList(contactOrRoomId)
+              return
+            }
+          } else {
+            log.warn(PRE, `Unknown contact type: ${JSON.stringify(contactOrRoom)}`)
+          }
+          await this.manager.processHistoryMessages(contactOrRoom)
         } catch (error) {
-          log.warn(PRE, `syncRoomMemberList(${contactOrRoomId}) failed, ${JSON.stringify(error)}`)
+          // 单个联系人/群处理失败(如 LID 会话在页面侧抛错)只跳过该项,
+          // 不能中断整个 onReady,否则 ready 事件发不出、联系人无法同步
+          log.warn(PRE, `onReady() process contactOrRoom(${contactOrRoomId}) failed, skip it, error: ${(error as Error).message}`)
         }
-        if (memberList.length > 0) {
-          roomCount++
-          await cacheManager.setContactOrRoomRawPayload(contactOrRoomId, contactWithAvatar)
-        } else {
-          await cacheManager.deleteContactOrRoom(contactOrRoomId)
-          await cacheManager.deleteRoomMemberIdList(contactOrRoomId)
-          return
-        }
-      } else {
-        log.warn(PRE, `Unknown contact type: ${JSON.stringify(contactOrRoom)}`)
-      }
-      await this.manager.processHistoryMessages(contactOrRoom)
-    })
+      })
 
-    log.info(PRE, `onReady() all contacts and rooms are ready, friendCount: ${friendCount} contactCount: ${contactCount} roomCount: ${roomCount}`)
-    await sleep(15 * 1000)
-    this.emit('ready')
-    this.loadingData = false
+      log.info(PRE, `onReady() all contacts and rooms are ready, friendCount: ${friendCount} contactCount: ${contactCount} roomCount: ${roomCount}`)
+      await sleep(15 * 1000)
+      this.emit('ready')
+    } finally {
+      this.loadingData = false
+    }
   }
 
   public async onLogout (reason: string = STRINGS[LANGUAGE].LOGOUT_REASON.DEFAULT) {
