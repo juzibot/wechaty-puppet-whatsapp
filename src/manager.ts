@@ -127,10 +127,17 @@ export default class Manager extends EE<ManagerEvents> {
       return
     }
     this.fetchingMessages = true
-    const fetchedMessageList = await this.fetchMessages(contactOrRoom)
-    const filteredMessageList = await this.filterFetchedMessages(contactOrRoom.id._serialized, fetchedMessageList)
-    await this.processFetchedMessages(filteredMessageList)
-    this.fetchingMessages = false
+    try {
+      const fetchedMessageList = await this.fetchMessages(contactOrRoom)
+      const filteredMessageList = await this.filterFetchedMessages(contactOrRoom.id._serialized, fetchedMessageList)
+      await this.processFetchedMessages(filteredMessageList)
+    } catch (error) {
+      // 历史消息是尽力而为的能力:单个会话拉取失败(如 LID 会话 getChat 抛错)
+      // 不能让异常沿 onReady 链路冒泡,否则 ready 事件发不出、联系人无法同步
+      log.warn(PRE, `processHistoryMessages(${contactOrRoom.id._serialized}) failed, skip history messages for this chat, error: ${(error as Error).message}`)
+    } finally {
+      this.fetchingMessages = false
+    }
   }
 
   private async fetchMessages (contactOrRoom: WhatsAppContact) {
