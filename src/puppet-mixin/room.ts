@@ -87,6 +87,12 @@ export async function roomCreate (
   log.verbose(PRE, 'roomCreate(%s, %s)', contactIdList, topic)
   const { friendsList, nonFriendsList } = await checkRoomMember.call(this, contactIdList)
   const group = await this.manager.createRoom(topic, friendsList)
+  // 页面 createGroup 失败时可能返回错误字符串而非结果对象(与类型声明不符),
+  // 裸读 gid._serialized 会抛 TypeError 掩盖真实失败原因
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (!group || typeof (group as unknown) === 'string' || !group.gid) {
+    throw WAError(WA_ERROR_TYPE.ERR_CREATE_ROOM, `roomCreate(${topic}) createRoom returned invalid result: ${typeof group === 'string' ? group : JSON.stringify(group)}`)
+  }
   const roomId = group.gid._serialized
   if (roomId) {
     if (nonFriendsList.length > 0) {

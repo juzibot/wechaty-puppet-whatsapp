@@ -27,7 +27,12 @@ export default class GroupEventHandler extends WhatsAppBase {
       roomId,
       timestamp: notification.timestamp,
     }
-    await this.manager.syncRoomMemberList(roomId)
+    try {
+      await this.manager.syncRoomMemberList(roomId)
+    } catch (e) {
+      // 成员同步失败不能吞掉 room-join 事件,成员列表靠后续 dirty 自愈
+      log.warn(PRE, `onRoomJoin() syncRoomMemberList(${roomId}) failed, emit room-join anyway, error: ${(e as Error).message}`)
+    }
     this.emit('room-join', roomJoinPayload)
     this.emit('dirty', {
       payloadId: roomId,
@@ -85,7 +90,14 @@ export default class GroupEventHandler extends WhatsAppBase {
         })
         break
       case GroupNotificationTypes.CREATE:
-        const members = await this.manager.syncRoomMemberList(roomId)
+        let members: string[] = []
+        try {
+          members = await this.manager.syncRoomMemberList(roomId)
+        } catch (e) {
+          // 建群通知的成员同步失败只降级为空成员列表,事件必须发出,
+          // 否则上层永远收不到 room-join、控制台看不到新群
+          log.warn(PRE, `onRoomUpdate(CREATE) syncRoomMemberList(${roomId}) failed, emit room-join with empty members, error: ${(e as Error).message}`)
+        }
         const roomJoinPayload = genRoomJoinEvent(notification, members)
         this.emit('room-join', roomJoinPayload)
         break
