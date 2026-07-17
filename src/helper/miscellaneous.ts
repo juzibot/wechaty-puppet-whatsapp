@@ -43,3 +43,15 @@ export const batchProcess = async (batchSize: number, list: any[], func: any) =>
 export const getMaxTimestampForLoadHistoryMessages = () => {
   return Math.floor(Date.now() / 1000) - HISTORY_MESSAGES_DAYS * 24 * 3600
 }
+
+/**
+ * 新版 WhatsApp 页面(LID 灰度)序列化的成员/owner id 可能是 wid 对象,
+ * 也可能已被页面侧转换为字符串;统一提取为字符串,两种形态都不是时返回 undefined
+ */
+export const widLikeToIdString = (id: unknown): string | undefined => {
+  if (typeof id === 'string') {
+    return id
+  }
+  const serialized = (id as { _serialized?: unknown } | undefined)?._serialized
+  return typeof serialized === 'string' ? serialized : undefined
+}

@@ -4,7 +4,7 @@ import { log, MAX_HEARTBEAT_MISSED, MEMORY_SLOT } from './config.js'
 import { CacheManager } from './data/cache-manager.js'
 import { WA_ERROR_TYPE } from './exception/error-type.js'
 import WAError from './exception/whatsapp-error.js'
-import { batchProcess, getMaxTimestampForLoadHistoryMessages, isRoomId, sleep } from './helper/miscellaneous.js'
+import { batchProcess, getMaxTimestampForLoadHistoryMessages, isRoomId, sleep, widLikeToIdString } from './helper/miscellaneous.js'
 import ScheduleManager from './helper/schedule/schedule-manager.js'
 import type { ManagerEvents } from './manager-event.js'
 import type { PuppetWhatsAppOptions } from './puppet-whatsapp.js'
@@ -182,6 +182,9 @@ export default class Manager extends EE<ManagerEvents> {
       const roomChat = (await this.requestManager.getChatById(roomId)) as GroupChat
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!roomChat.participants) {
+        if (!this.selfId) {
+          throw WAError(WA_ERROR_TYPE.ERR_INIT, `getRoomChatById(${roomId}) can not build fallback participants before login`)
+        }
         roomChat.participants = [{
           id: (await this.requestManager.getContactById(this.selfId)).id,
           isAdmin: true,
@@ -203,7 +206,14 @@ export default class Manager extends EE<ManagerEvents> {
   public async syncRoomMemberList (roomId: string): Promise<string[]> {
     const roomChat = await this.getRoomChatById(roomId)
     // FIXME: How to deal with pendingParticipants? Maybe we should find which case could has this attribute.
-    const memberIdList = roomChat.participants.map(m => m.id._serialized)
+    // LID 灰度下成员 id 可能是字符串或 wid 对象,裸读 _serialized 会把
+    // undefined 写进成员缓存,引发下游逐成员查找风暴
+    const memberIdList = roomChat.participants
+      .map(m => widLikeToIdString(m.id))
+      .filter((id): id is string => !!id)
+    if (memberIdList.length !== roomChat.participants.length) {
+      log.warn(PRE, `syncRoomMemberList(${roomId}) dropped ${roomChat.participants.length - memberIdList.length} members without id`)
+    }
     const cacheManager = await this.getCacheManager()
     await cacheManager.setRoomMemberIdList(roomId, memberIdList)
     return memberIdList
