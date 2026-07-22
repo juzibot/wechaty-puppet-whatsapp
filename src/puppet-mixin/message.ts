@@ -178,6 +178,12 @@ export async function messageFile (this: PuppetWhatsApp, messageId: string): Pro
 async function downloadMedia (this: PuppetWhatsApp, msg: WhatsAppMessagePayload) {
   const msgObj = convertMessagePayloadToClass(this.manager.getWhatsAppClient(), msg)
   const media = await msgObj.downloadMedia()
+  // 页面侧媒体过期/拉取失败时 downloadMedia 会合法地返回空(与类型声明不符),
+  // 裸读 media.mimetype 只会抛无信息的 TypeError 掩盖真实原因
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (!media) {
+    throw WAError(WA_ERROR_TYPE.ERR_MSG_FILE, `downloadMedia(${msg.id}) got empty media, media may be expired or page fetch failed`)
+  }
   const filenameExtension = mime.getExtension(media.mimetype)
   const fileBox = FileBox.fromBase64(media.data, media.filename ?? `unknown_name.${filenameExtension}`)
   fileBox.mimeType = media.mimetype
