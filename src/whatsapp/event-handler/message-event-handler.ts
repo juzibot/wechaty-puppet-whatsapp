@@ -20,6 +20,7 @@ import {
   getInviteCode,
   sleep,
 } from '../../helper/miscellaneous.js'
+import { genCaptionTextMessage } from '../../helper/pure-function/gen-caption-text-message.js'
 import { RequestPool } from '../../request/request-pool.js'
 import { v4 } from 'uuid'
 
@@ -41,7 +42,7 @@ export default class MessageEventHandler extends WhatsAppBase {
       || (message.type === 'e2e_notification'
       && message.body === ''
       && !message.author
-      && _data.subtype !== 'encrypt')
+      && _data?.subtype !== 'encrypt')
     ) {
       // skip room join notification and multi_vcard message
       return
@@ -52,24 +53,15 @@ export default class MessageEventHandler extends WhatsAppBase {
     if (messageInCache) {
       return
     }
-    if (_data.type === 'notification_template' && _data.subtype === 'contact_info_card') {
+    if (_data?.type === 'notification_template' && _data?.subtype === 'contact_info_card') {
       message.type = WhatsAppMessageType.TEXT
       message.body = '[客户通过广告或其他渠道发起对话]'
     }
-    if (_data.type === 'e2e_notification' && _data.subtype === 'encrypt') {
+    if (_data?.type === 'e2e_notification' && _data?.subtype === 'encrypt') {
       message.type = SpecialSystemType
       message.body = '消息和通话已进行端到端加密。只有此聊天中的成员可以查看、收听或分享。'
     }
     await cacheManager.setMessageRawPayload(messageId, message)
-    if ((message as WhatsAppMessagePayload)._data?.caption && (message as WhatsAppMessagePayload)._data?.type === 'image') { // see issue: https://github.com/wechaty/puppet-whatsapp/issues/390
-      // file message also have captions, but no text message should be generated
-      const genTextMessageFromImageMessage = message as WhatsAppMessagePayload
-      genTextMessageFromImageMessage.type = WhatsAppMessageType.TEXT
-      const textMsgId = `${genTextMessageFromImageMessage.id.id}_TEXT`
-      genTextMessageFromImageMessage.id.id = textMsgId
-      genTextMessageFromImageMessage._data = undefined
-      await this.onMessage(genTextMessageFromImageMessage)
-    }
 
     const contactId = message.from
     if (contactId && isContactId(contactId)) {
@@ -92,6 +84,13 @@ export default class MessageEventHandler extends WhatsAppBase {
     const needEmitMessage = await this.convertInviteLinkMessageToEvent(message)
     if (needEmitMessage) {
       this.emit('message', { messageId })
+    }
+
+    if ((message as WhatsAppMessagePayload)._data?.caption && (message as WhatsAppMessagePayload)._data?.type === 'image') { // see issue: https://github.com/wechaty/puppet-whatsapp/issues/390
+      // file message also have captions, but no text message should be generated
+      const captionMessage = genCaptionTextMessage(message as WhatsAppMessagePayload)
+      await cacheManager.setMessageRawPayload(captionMessage.id.id, captionMessage)
+      this.emit('message', { messageId: captionMessage.id.id })
     }
   }
 
