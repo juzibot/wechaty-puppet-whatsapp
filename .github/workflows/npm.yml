@@ -63,7 +63,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - name: Install npm
-        run: npm install npm@latest -g
+        run: npm install npm@11 -g
 
       - name: Install Dependencies
         run: npm install
